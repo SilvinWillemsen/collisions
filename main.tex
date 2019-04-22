@@ -11,6 +11,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{cases}
 
 \usepackage{xcolor}
 \def\SBcomment[#1]{\textcolor{red}{#1}}
@@ -31,13 +32,13 @@ This document shows several examples of non-linearities in physical modelling ba
 
 Energy analysis proves to be a handy tool for verifying whether the devised system is stable or not.
 
-\section{Preamble}
-Imagine a mass at location $u = u(t)$ colliding with a barrier at location $b$. Its system would be described as
+\section{Preabmble: Mass-barrier collision}
+The simplest collision case is a mass colliding with a rigid barrier. Imagine a mass at location $u = u(t)$ colliding with a barrier at location $b$. If the barrier is placed above\footnote{When talking about an element being `above' or `below' another in this context, what is meant is a more positive or negative displacement, i.e., a mass with a displacement of 0.01 will be `above' a barrier with a displacement of -0.05. Along these lines, a positive force acting on an element will accelerate it upwards and a negative force will accelerate it downwards.} the mass, the force it exerts on the mass will be negative and its system would be described as
 \begin{equation}\label{eq:massBarrier}
     Mu_{tt} = -K[\eta]_+^\alpha,
 \end{equation}
-with mass $M$, collision stiffness $K \geq 0$ and non-linearity $\alpha \geq 1$ and $\eta = u - b$ describes the relative displacement between the two colliding bodies.
-\begin{equation}
+with mass $M$ (in kg), collision stiffness $K \geq 0$ (in N/m \SWcomment[???]) and non-linearity $\alpha \geq 1$ and $\eta = u - b$ describes the relative displacement between the two colliding bodies (in m).
+\begin{equation}\label{eq:etaPlus}
     [\eta]_+ = \frac{\eta + |\eta|}{2}
 \end{equation}
 describes the positive part of $\eta$ (see Figure \ref{fig:eta}). This can be interpreted as that $\eta$ will only be non-zero when the two colliding bodies are in contact.
@@ -47,47 +48,304 @@ describes the positive part of $\eta$ (see Figure \ref{fig:eta}). This can be in
 \caption{\label{fig:eta}{A plot of $[\eta]_+$.}}
 \end{figure}
 
-\noindent The second term can be rewritten, to 
+\noindent The second term can be rewritten to 
+\begin{equation}\label{eq:derivPotential}
+    \phi'(\eta) = \frac{d\phi(\eta)}{d\eta}\overset{\text{chain rule}}{\xrightarrow{\hspace*{1.4cm}}}  \frac{\dot{\phi}(\eta)}{\dot{\eta}} =  K[\eta]_+^\alpha
+\end{equation}
+where
 \begin{equation}\label{eq:potential}
-    \phi'(\eta) = \frac{d\phi}{d\eta}\overset{\text{chain rule}}{\xrightarrow{\hspace*{1.4cm}}}  \frac{\dot{\phi}(\eta)}{\dot{\eta}} =  K[\eta]_+
+    \phi(\eta) = \frac{K}{\alpha+1}[\eta]_+^{\alpha + 1}\ ,
+\end{equation}
+describes the potential energy of the system. Equation \eqref{eq:massBarrier} can then be rewritten to
+\begin{equation}
+    Mu_{tt} = -\phi'(\eta).
+\end{equation}
+According to Ducceschi in \cite{Ducceschi2019}, this potential has been used before in the literature, but when discretised, results in an implicit system for which an iterative solver (such as Newton-Raphson's method) must be employed. In his work, he proposes to rewrite the potential in Eq. \eqref{eq:derivPotential} as
+\begin{equation}
+    \psi\psi' \quad \text{where} \quad \psi = \sqrt{2\phi} \quad \text{and} \quad \psi' = \frac{\dot{\psi}}{\dot{\eta}}\ ,
 \end{equation}
 yielding
-\begin{equation}
-    Mu_{tt} = -\phi'(\eta)
+\begin{equation}\label{eq:massBarrierPsi}
+    Mu_{tt}=-\psi\psi'.
 \end{equation}
-and describes the potential energy of the system. Equation \eqref{eq:potential} is the derivative of
+See Appendix \ref{app:phiPsiProof} for a proof that $\phi'$ is equivalent to $\psi\psi'$.
+\subsubsection*{Discrete time}
+For the discrete time definition of $\psi'$ we can use 
 \begin{equation}
-    \phi(\eta) = \frac{K}{\alpha+1}[\eta]_+^{\alpha + 1}\ .
+    g^n = \frac{\delta_{t+}\psi^{n-1/2}}{\delta_{t\cdot}\eta^n},
 \end{equation}
-%
-According to Ducceschi in \cite{Ducceschi2019}, this potential has been used before in the literature, but when discretised, results in an implicit system for which an iterative solver (such as Newton-Raphson's method) must be employed. In his work, he proposes to rewrite the potential in Eq. \eqref{eq:potential} as
+where $\psi$ at interleaved grid point $n-1/2$ is defined as
 \begin{equation}
-    \psi\psi' \quad \text{where} \quad \psi = \sqrt{2\phi} \quad \text{and} \quad \psi' = \frac{\dot{\psi}}{\dot{\eta}}\ .
+    \psi^{n-1/2} = \mu_{t-}\psi^n,
+\end{equation} 
+and is proven useful as \SWcomment[it requires less memory...] Equation \eqref{eq:massBarrierPsi} can then be discretised to the following system.\footnote{It is important to realise whether the mass is placed above or below the barrier as this will affect the following two things in \eqref{eq:massBarrierSystem}:
+\begin{enumerate}
+    \item The direction of the force (the sign of the term right-hand side in \eqref{eq:massBarrier1}): if the barrier is placed above the mass this will exert a downwards (negative) force on the mass, when below, the opposite applies. Of course, the sign used here is determined by the system described in \eqref{eq:massBarrier} where the force-term is negative.
+    \item The definition of eta (what is subtracted from what?): imagine that the collision happens when $\eta$ is positive, so when the barrier is placed above the mass, $u^n-b$ will be positive on collision. Remember: $\eta$ is defined as the element above subtracted from the element below.
+\end{enumerate}}
+% \begin{equation}
+% \begin{numcases}
+%     $Mu_{tt} $&$= -\big(\mu_{t+}\psi^{n-1/2}\big)g^n$ \\
+%     $\delta_{t+}\psi^{n-1/2} $& $=  g^n\delta_{t\cdot}\eta^n\ $,
+% \end{numcases}
+% % \end{equation}
+\begin{subequations}\label{eq:massBarrierSystem}
+\begin{numcases}{}
+    M\delta_{tt}u^n & $= -\big(\mu_{t+}\psi^{n-1/2}\big)g^n$ \label{eq:massBarrier1} \\
+   \delta_{t+}\psi^{n-1/2} &= $g^n\delta_{t\cdot}\eta^n$ \label{eq:massBarrier2} \\ 
+   \eta^n &$= u^n - b$ \label{eq:etaMassBarrier}
+\end{numcases}
+\end{subequations}
+Furthermore, $g^n$ can be computed using its analytic derivative
+\begin{equation}
+    g^n = \psi'\bigg\rvert_{\eta=\eta^n} = \frac{\phi'}{\sqrt{2\phi}}\bigg\rvert_{\eta=\eta^n}
 \end{equation}
-\section{Mass - Rigid barrier collision}
-The simplest collision case is a point mass colliding with a rigid barrier. If the mass is given a restoring force a simple mass-spring system emerges
+which, using \eqref{eq:derivPotential} and \eqref{eq:potential}, can conveniently be rewritten to
+\begin{equation}\label{eq:gn}
+    g^n = \frac{K[\eta^n]_+^\alpha}{\sqrt{\frac{2K}{\alpha+1}[\eta^n]_+^{\alpha+1}}}=\sqrt{\frac{K(\alpha+1)}{2}}[\eta^n]_+^{\frac{\alpha-1}{2}}\ .
+\end{equation}
+Using the following identity
+\begin{equation}
+    \mu_{t+}\psi^{n-1/2} = \frac{k}{2}\delta_{t+}\psi^{n-1/2} + \psi^{n-1/2},
+\end{equation}
+inserting \eqref{eq:massBarrier2} into this 
+\begin{equation}\nonumber
+    \mu_{t+}\psi^{n-1/2} = \frac{k}{2}g^n\delta_{t\cdot}\eta^n + \psi^{n-1/2},
+\end{equation}
+and inserting this into \eqref{eq:massBarrier1} yields
+\begin{equation}\label{eq:substitutionFDS}
+    M\delta_{tt}u^n = -\Big(\frac{k}{2}g^n\delta_{t\cdot}\eta^n + \psi^{n-1/2}\Big)g^n\ .
+\end{equation}
+As in this case, the position of barrier $b$ is static, the following is true:
+\begin{equation}\label{eq:derEtaEqDerU}
+    \frac{d\eta}{dt} = \frac{d}{dt}\Big(u - b\Big)\Rightarrow \delta_{t\cdot}\eta^n = \delta_{t\cdot}u^n,
+\end{equation}
+i.e., the time derivative of $\eta$ equals the time derivative of $u$.\footnote{Note that if the barrier was placed underneath the mass, making \eqref{eq:etaMassBarrier} $\eta^n = b-u^n$, this would result in $\delta_{t_\cdot}\eta^n = -\delta_{t\cdot}u^n$.} Now we can solve \eqref{eq:substitutionFDS} explicitly as $u^{n+1}$ is the only unknown
+\begin{equation}
+    \bigg(\frac{M}{k^2} + \frac{(g^n)^2}{4}\bigg)u^{n+1} = \frac{M}{k^2}(2u^n-u^{n-1})+\frac{(g^n)^2}{4}u^{n-1}-\psi^{n-1/2}g^n\ ,
+\end{equation}
+and can be solved by a simple division. From this, $\eta^{n+1}$ can be calculated using \eqref{eq:etaMassBarrier}:
+\begin{equation}\label{eq:etaNPlus1}
+    \eta^{n+1} = u^{n+1}-b,
+\end{equation}
+and can be used to calculate $\psi^{n+1/2}$ by expanding and rewriting \eqref{eq:massBarrier2} to
+\begin{equation}\label{eq:psiNPlusHalf}
+    \psi^{n+1/2} = \psi^{n-1/2} + \frac{\eta^{n+1} - \eta^{n-1}}{2}.
+\end{equation}
+
+\section{Mass-spring - Rigid barrier collision}
+If the mass described in the previous section (Eq. \eqref{eq:massBarrierPsi}) is given a restoring force, the following equation emerges
 \begin{equation}\label{eq:massSpringBarrier}
-    Mu_{tt} = -M\omega_0^2u - \psi\psi'
+    Mu_{tt} = -M\omega_0^2u - \psi\psi'.
 \end{equation}
-This system can be written 
+where $\omega_0 = 2\pi f_0$ is the angular frequency of the mass-spring system (in s$^{-1}$) with fundamental frequency $f_0$ (in Hz). This system can be discretised to the following system (similar to \eqref{eq:massBarrierSystem})
 
-
-where $g^n$ can conveniently be rewritten to:
-
+\begin{subnumcases}{}
+    M\delta_{tt}u^n &$= -M\omega_0^2u^n - \big(\mu_{t+}\psi^{n-1/2}\big)\,g^n,$\\
+    \delta_{t+}\psi^{n-1/2}& $=g^n\delta_{t\cdot}\eta^n$\\
+    \eta^n &$= u^n - b$
+\end{subnumcases}
+where $g^n$ is again computed according to \eqref{eq:gn}. The system can, similarly to the one in the previous section, be discretised to
 \begin{equation}
-    g = \sqrt{\frac{K(\alpha+1)}{2}}[\eta]_+^{\frac{\alpha-1}{2}}
+    \bigg(\frac{M}{k^2} + \frac{(g^n)^2}{4}\bigg)u^{n+1} = \frac{M}{k^2}(2u^n-u^{n-1})-M\omega_0^2u^n +\frac{(g^n)^2}{4}u^{n-1}-\psi^{n-1/2}g^n\ ,
 \end{equation}
+after which $\eta^{n+1}$ using \eqref{eq:etaNPlus1} and $\psi^{n+1/2}$ using \eqref{eq:psiNPlusHalf} can be calculated. 
 
+\section{Mass-spring - Mass-spring Collision}
+The initial idea for this implementation was to make the barrier in the previous section able to move. However, as the barrier would be unaffected by the mass, the energy balance would be incorrect. Imagine a baseball bat hitting a ping-pong ball. Even though the bat would not seem to be affected by the ping-pong ball, it will as some energy of the ball will be transferred into the bat. To model this behaviour, we can implement two colliding masses, one of which has a very high mass relative to the other, and to make it more interesting, we can add a restoring force to both. Assuming a mass with displacement $u = u(t)$ to be placed above a mass with displacement $w = w(t)$, the (continuous) system will look like this 
 
-\section{Mass - Mass Collision}
-The initial idea for this implementation was to make the barrier able to move. However, this would 
-Replacing the rigid barrier by a mass
+\begin{subnumcases}{}
+    M_1u_{tt} &$=-M_1\omega_1^2u+\psi\psi'$\\
+    M_2w_{tt} &$=-M_2\omega_2^2w-\psi\psi'$
+\end{subnumcases}
+which, when discretised yields
+\begin{subequations}\label{eq:mSmSDisc}
+\begin{numcases}{}
+    M_1\delta_{tt}u^n &$= -M_1\omega_1u^n+\Big(\mu_{t+}\psi^{n-1/2}\Big)g^n$\label{eq:massMass1}\\
+    M_2\delta_{tt}w^n &$= -M_2\omega_2w^n-\Big(\mu_{t+}\psi^{n-1/2}\Big)g^n$\label{eq:massMass2}\\
+    \delta_{t+}\psi^{n-1/2}& $=g^n\delta_{t\cdot}\eta^n$\\
+    \eta^n &$= w^n - u^n$\label{eq:etaMSMS}
+\end{numcases}
+\end{subequations}
+Note that the term denoting the collision will have a positive effect on $u$ and a negative effect on $w$ as $u$ is placed above $w$.
 
+As we are now working with two moving objects colliding, \eqref{eq:derEtaEqDerU} is not valid anymore. The main challenge here, is to solve the system for two unknowns: $u^{n+1}$ and $w^{n+1}$. Rewriting \eqref{eq:massMass1} and \eqref{eq:massMass2} in terms of these two unknowns yields
 
- 
-\section{Conclusion}
-``I always thought something was fundamentally wrong with the universe'' \citep{adams1995hitchhiker}
+\begin{align}
+    \mathbf{A}
+    \begin{bmatrix}
+        u^{n+1}\\
+        w^{n+1}
+    \end{bmatrix}
+    = 
+    \mathbf{v} \quad\Rightarrow \quad 
+    \begin{bmatrix}
+        u^{n+1}\\
+        w^{n+1}
+    \end{bmatrix} = \mathbf{A}^{-1}\mathbf{v}
+\end{align}
+where 
+\begin{equation}
+    \mathbf{A} = \begin{bmatrix}
+        \frac{M_1}{k^2}+\frac{(g^n)^2}{4} & -\frac{(g^n)^2}{4} \\
+        -\frac{(g^n)^2}{4} & \frac{M_2}{k^2} + \frac{(g^n)^2}{4}
+    \end{bmatrix}
+    \quad\text{and}\quad\mathbf{v} =
+    \begin{bmatrix}
+        \frac{M_1}{k^2}(2u^n-u^{n-1})-M_1\omega_1u^n-\frac{(g^n)^2}{4}\eta^{n-1}+\psi^{n-1/2}g^n\\
+        \frac{M_2}{k^2}(2w^n-w^{n-1})-M_2\omega_2w^n+\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n
+    \end{bmatrix}\nonumber
+\end{equation}
+See Appendix \ref{app:massMassDeriv} for the deriviation of this. The relative displacement $\eta^{n+1}$ can then be calculated using \eqref{eq:etaMSMS}.
+
+\section{String - String Collision}\label{sec:stringString}
+Moving to a string - string collision, we can define states $u = u(x,t)$ and $w = w(x,t)$ which are now distributed or defined over spatial coordinate $0\leq x\leq L$ where $L$ is the length of the repective string. Using the definitions of the stiff string defined in, fx., \cite{Bilbao2009}, the continuous system is defined as
+
+\begin{subequations}
+    \begin{numcases}{}
+        \rho_1 A_1u_{tt} &$= T_1u_{xx}-E_1I_1u_{xxxx}+\psi\psi'$\\
+        \rho_2 A_2w_{tt} &$= T_2w_{xx}-E_2I_2w_{xxxx}-\psi\psi'$
+    \end{numcases}
+\end{subequations}
+with material density $\rho$ (in kg$\cdot$m$^{-3}$), cross-sectional area $A=\pi r^2$ (in m$^2$) with radius $r$ (in m), tension $T$ (in N), Young's modulus E (in Pa) and area moment of inertia $I = \pi r^4/4$ (in m$^4$) of string $1$ with displacement $u$ and string $2$ with displacement $w$ respectively. When discretising this, $x=lh$ for grid point $l\in[0, ..., N]$ and grid spacing $h$, yields
+\begin{subequations}
+\begin{numcases}{}
+    \rho_1A_1\delta_{tt}u_l^n &$= T_1\delta_{xx}u_l^n-E_1I_1\delta_{xxxx}u^n_l+\Big(\mu_{t+}\psi^{n-1/2}_l\Big)\,g^n_l$\\
+     \rho_2A_2\delta_{tt}w_l^n &$= T_2\delta_{xx}w_l^n-E_2I_2\delta_{xxxx}w^n_l-\Big(\mu_{t+}\psi^{n-1/2}_l\Big)\,g^n_l$\\
+     \delta_{t+}\psi^{n-1/2}_l& $=g^n_l\delta_{t\cdot}\eta^n_l$\\
+     \eta^n_l &$= w^n_l - u^n_l$
+\end{numcases}
+\end{subequations}
+Note that $\psi$, $g$ and $\eta$ are now also distributed, i.e., defined separately for every grid point on the string separately. Also, it is assumed that both strings have the same grid spacing $h$ and number of points $N$ and are located right above/below each other. We can solve this system similarly to \eqref{eq:mSmSDisc} and solve for every individual grid point $l$: 
+\begin{align}
+    \begin{bmatrix}
+        u^{n+1}_l\\
+        w^{n+1}_l
+    \end{bmatrix}
+    = 
+    \mathbf{A}_l^{-1}\mathbf{v}_l
+\end{align}
+where
+\begin{equation}
+\begin{gathered}
+\mathbf{A}_l = 
+    \begin{bmatrix}
+        \frac{\rho_1A_1}{k^2}+\frac{(g^n_l)^2}{4} & -\frac{(g_l^n)^2}{4}\\
+        -\frac{(g_l^n)^2}{4} &\frac{\rho_2A_2}{k^2}+\frac{(g^n_l)^2}{k^2}
+    \end{bmatrix}
+    \quad \text{and}\\
+    \mathbf{v}_l = 
+    \begin{bmatrix}
+        \frac{\rho_1A_1}{k^2}(2u^n_l-u_l^{n-1})+T_1\delta_{xx}u_l^n-E_1I_1\delta_{xxxx}u_l^n-\frac{(g_l^n)^2}{4}\eta_l^{n-1}+\psi_l^{n-1/2}g_l^n\\
+        \frac{\rho_2A_2}{k^2}(2w^n_l-w_l^{n-1})+T_2\delta_{xx}w_l^n-E_2I_2\delta_{xxxx}w_l^n+\frac{(g_l^n)^2}{4}\eta_l^{n-1}-\psi_l^{n-1/2}g_l^n
+    \end{bmatrix}
+    \nonumber
+\end{gathered}
+\end{equation}
+\\
+For brevity, the spatial-derivative operators $\delta_{xx}$ and $\delta_{xxxx}$ have not been expanded.
+\section{Mass-spring - String Collision}\label{sec:massString}
+The mass-spring - string collision is a bit trickier as we are now working with two different systems. We will denote the string with state $u = u(x,t)$ and the mass with state $w = w(t)$. When placing the string above the mass, the following system emerges:
+\begin{subequations}
+\begin{numcases}{}
+    \rho A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx} + J(l_\text{m}) \big(\mu_{t+}\psi^{n-1/2}_1\big)g^n$ \label{eq:massString1}\\
+    M \delta_{tt}w^n &$=-M\omega_0^2w^n - \big(\mu_{t+}\psi^{n-1/2}\big)g^n$\\
+    \delta_{t+}\psi^{n-1/2} &$= g^n\delta_{t\cdot}\eta^n$\\
+    \eta^n &$= w^n - u_{l_\text{m}}^n$
+\end{numcases}
+\end{subequations}
+where $0 \leq l_\text{m} \leq N$ is the location (in grid points) of the mass along the string. It is important to note that the mass only interacts with one grid point, meaning that the mass (in kg) of the string that it interacts with is only $\rho Ah$, i.e., the mass of one grid point. This is where the spreading operator $J$ comes in:
+\begin{equation}
+J(l_\text{m})=
+    \begin{cases}
+        1/h, & l = l_\text{m}\\
+        0, & \text{otherwise}
+    \end{cases}
+\end{equation}
+and, as can be seen in \eqref{eq:massString1}, locates the collision term at $l_\text{m}$ and scales it by $1/h$ at that location. As the collision happens at only one point, i.e., is not distributed as in Section \ref{sec:stringString}, we solve the following system:
+\begin{align}
+\begin{bmatrix}
+        u^{n+1}_{l_\text{m}}\\
+        w^{n+1}
+    \end{bmatrix}
+    = 
+    \mathbf{A}^{-1}\mathbf{v}
+\end{align}
+where
+\begin{equation}
+\begin{gathered}
+\mathbf{A} = 
+    \begin{bmatrix}
+        \frac{\rho A}{k^2}+\frac{(g^n)^2}{4h} & -\frac{(g^n)^2}{4h}\\
+        -\frac{(g^n)^2}{4} &\frac{M}{k^2}+\frac{(g^n)^2}{k^2}
+    \end{bmatrix}
+    \quad \text{and}\\
+    \mathbf{v} = 
+    \begin{bmatrix}
+        \frac{\rho A}{k^2}(2u^n_{l_\text{m}}-u_{l_\text{m}}^{n-1})+T\delta_{xx}u_{l_\text{m}}^n-EI\delta_{xxxx}u_{l_\text{m}}^n+\Big(-\frac{(g^n)^2}{4}\eta^{n-1}+\psi^{n-1/2}g^n\Big) / h\\
+        \frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n+\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n
+    \end{bmatrix}
+    \nonumber
+\end{gathered}
+\end{equation}
+Once $\eta^{n+1}$ is then calculated from this, it can be applied to the string in a common finite-difference scheme for calculating $u^{n+1}$
+\begin{equation}
+    \frac{\rho A}{k^2}u^{n+1}_l = \frac{\rho A}{k^2}(2u^n_l-u_l^{n-1})+T\delta_{xx}u_l^n-EI\delta_{xxxx}u_l^n+J(l_\text{m}) \bigg(\frac{(g^n)^2}{4}(\eta^{n+1}-\eta^{n-1})+\psi^{n-1/2}g^n\bigg).
+\end{equation}
+\section{Tromba Marina}
+The tromba marina is a bowed string instrument with a rattling bridge. The system we will be looking will contain a string, a mass simulating the bridge and a barrier simulating the body of the instrument (see Figure \ref{fig:tromba}). 
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=1\columnwidth]{tromba.eps}}
+\caption{\label{fig:tromba}{The tromba marina system: a string, a bridge (mass) and body (rigid barrier).}}
+\end{figure}
+
+\begin{subnumcases}{}
+    \rho A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx} + J(l_\text{br}) \big(\mu_{t+}\psi^{n-1/2}_1\big)g^n_1$ \\
+    M \delta_{tt}w^n &$=-M\omega_0^2w^n - \big(\mu_{t+}\psi^{n-1/2}_1\big)g_1^n + \big(\mu_{t+}\psi_2^{n-1/2}\big)g_2^n$\\
+    \delta_{t+}\psi^{n-1/2}_1 &$= g^n_1\delta_{t\cdot}\eta_1^n$\\
+    \delta_{t+}\psi^{n-1/2}_2 &$= g^n_2\delta_{t\cdot}\eta_2^n$\\
+    \eta_1^n &$= w^n - u_{l_\text{br}}^n$\\
+    \eta_2^n &$= b - w^n$
+\end{subnumcases}
+As done in Section \ref{sec:massString}, the spreading operator $J$ is used to apply the effect of the mass only to grid point $l_\text{br}$ on the string.
+\subsection{Implementation}
+Equation \eqref{eq:etaPlus} can be implemented using Matlab's \texttt{subplot} function.
 
 \bibliographystyle{plain}
 \bibliography{references}
+\appendix
+\section{Proof that $\psi\psi' = \phi'$}\label{app:phiPsiProof}
+In this appendix, I will prove an equality that Ducceschi presents in \cite{Ducceschi2019} which is crucial to his method:
+\begin{equation}\label{eq:equality}
+    \psi\psi' = \phi' \Rightarrow \psi\frac{\dot{\psi}}{\dot{\eta}} = \frac{\dot{\phi}}{\dot\eta}\quad \text{where}\quad \psi = \sqrt{2\phi}.
+\end{equation}
+In discrete time, \eqref{eq:equality} becomes
+\begin{equation}\label{eq:discEquality}
+    \big(\mu_{t+}\psi^{n-1/2}\big)\,\frac{\delta_{t+}\psi^{n-1/2}}{\delta_{t\cdot}\eta^n} = \frac{\delta_{t+}\phi^{n-1/2}}{\delta_{t\cdot}\eta^n}. 
+\end{equation}
+Multiplying both sides by $\delta_{t\cdot} \eta^n$ and continuing with the left hand side of \eqref{eq:discEquality}, we can expand its operators:
+\begin{equation}
+    \begin{aligned}\nonumber
+        &\frac{1}{2}\big(\psi^{n+1/2}+\psi^{n-1/2}\big)\frac{1}{k}\big(\psi^{n+1/2}-\psi^{n-1/2}\big) \\
+        =\ &\frac{1}{2k}\Big((\psi^{n+1/2})^2 - (\psi^{n-1/2})^2\Big)\\
+        =\ &\frac{1}{2k}\bigg(\Big(\sqrt{2\phi^{n+1/2}}\Big)^2 - \Big(\sqrt{2\phi^{n-1/2}}\Big)^2\bigg)\\
+        =\ &\frac{1}{k}\Big(\phi^{n+1/2} - \phi^{n-1/2}\Big)\\
+        =\ &\delta_{t+}\phi^{n-1/2}
+    \end{aligned}
+\end{equation}
+which, when divided by $\delta_{t\cdot}\eta^n$ again satisfies \eqref{eq:discEquality}.
+
+\section{Colliding Mass-springs deriviation}\label{app:massMassDeriv}
+\begin{align}
+    \frac{M_1}{k^2}u^{n+1} &= \frac{M_1}{k^2}(2u^n-u^{n-1})-M_1\omega_1u^n+\Big(\frac{g^n}{4}(\eta^{n+1}-\eta^{n-1})+\psi^{n-1/2}\Big)g^n\nonumber\\
+    \frac{M_1}{k^2}u^{n+1} &= \frac{M_1}{k^2}(2u^n-u^{n-1})-M_1\omega_1u^n+\frac{(g^n)^2}{4}(w^{n+1}-u^{n+1}-\eta^{n-1})+\psi^{n-1/2}g^n\nonumber\\
+    \bigg(\frac{M_1}{k^2}+\frac{(g^n)^2}{4}\bigg)u^{n+1} &- \frac{(g^n)^2}{4}w^{n+1} = \frac{M_1}{k^2}(2u^n-u^{n-1})-M_1\omega_1u^n-\frac{(g^n)^2}{4}\eta^{n-1}+\psi^{n-1/2}g^n
+\end{align}
+
+\begin{align}
+    \frac{M_2}{k^2}w^{n+1} &= \frac{M_2}{k^2}(2w^n-w^{n-1})-M_2\omega_2w^n-\Big(\frac{g^n}{4}(\eta^{n+1}-\eta^{n-1})+\psi^{n-1/2}\Big)g^n\nonumber\\
+    \frac{M_2}{k^2}w^{n+1} &= \frac{M_2}{k^2}(2w^n-w^{n-1})-M_2\omega_2w^n-\frac{(g^n)^2}{4}(w^{n+1}-u^{n+1}-\eta^{n-1})-\psi^{n-1/2}g^n\nonumber\\
+    - \frac{(g^n)^2}{4}u^{n+1} &+ \bigg(\frac{M_2}{k^2}+\frac{(g^n)^2}{4}\bigg)w^{n+1} = \frac{M_2}{k^2}(2w^n-w^{n-1})-M_2\omega_2w^n+\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n
+\end{align}
 \end{document}
