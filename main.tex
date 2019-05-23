@@ -69,7 +69,7 @@ yielding
     Mu_{tt}=-\psi\psi'.
 \end{equation}
 See Appendix \ref{app:phiPsiProof} for a proof that $\phi'$ is equivalent to $\psi\psi'$.
-\subsubsection*{Discrete time}
+\subsection{Discrete time}
 For the discrete time definition of $\psi'$ we can use 
 \begin{equation}
     g^n = \frac{\delta_{t+}\psi^{n-1/2}}{\delta_{t\cdot}\eta^n},
@@ -96,7 +96,9 @@ and is proven useful as \SWcomment[it requires less memory...] Equation \eqref{e
    \eta^n &$= u^n - b$ \label{eq:etaMassBarrier}
 \end{numcases}
 \end{subequations}
-Furthermore, $g^n$ can be computed using its analytic derivative
+\subsection{Implementation}
+\subsubsection*{Step 1: Calculate $g^n$}
+The first step is to calculate $g^n$ using its analytic derivative
 \begin{equation}
     g^n = \psi'\bigg\rvert_{\eta=\eta^n} = \frac{\phi'}{\sqrt{2\phi}}\bigg\rvert_{\eta=\eta^n}
 \end{equation}
@@ -104,6 +106,7 @@ which, using \eqref{eq:derivPotential} and \eqref{eq:potential}, can convenientl
 \begin{equation}\label{eq:gn}
     g^n = \frac{K[\eta^n]_+^\alpha}{\sqrt{\frac{2K}{\alpha+1}[\eta^n]_+^{\alpha+1}}}=\sqrt{\frac{K(\alpha+1)}{2}}[\eta^n]_+^{\frac{\alpha-1}{2}}\ .
 \end{equation}
+\subsubsection*{Step 2: Substitution of identity for $\mu_{t+}\psi^{n-1/2}$}
 Using the following identity
 \begin{equation}
     \mu_{t+}\psi^{n-1/2} = \frac{k}{2}\delta_{t+}\psi^{n-1/2} + \psi^{n-1/2},
@@ -116,6 +119,7 @@ and inserting this into \eqref{eq:massBarrier1} yields
 \begin{equation}\label{eq:substitutionFDS}
     M\delta_{tt}u^n = -\Big(\frac{k}{2}g^n\delta_{t\cdot}\eta^n + \psi^{n-1/2}\Big)g^n\ .
 \end{equation}
+\subsubsection*{Step 3: Solving the system for $u^{n+1}$}
 As in this case, the position of barrier $b$ is static, the following is true:
 \begin{equation}\label{eq:derEtaEqDerU}
     \frac{d\eta}{dt} = \frac{d}{dt}\Big(u - b\Big)\Rightarrow \delta_{t\cdot}\eta^n = \delta_{t\cdot}u^n,
@@ -124,7 +128,8 @@ i.e., the time derivative of $\eta$ equals the time derivative of $u$.\footnote{
 \begin{equation}
     \bigg(\frac{M}{k^2} + \frac{(g^n)^2}{4}\bigg)u^{n+1} = \frac{M}{k^2}(2u^n-u^{n-1})+\frac{(g^n)^2}{4}u^{n-1}-\psi^{n-1/2}g^n\ ,
 \end{equation}
-and can be solved by a simple division. From this, $\eta^{n+1}$ can be calculated using \eqref{eq:etaMassBarrier}:
+and can be solved by a simple division. 
+\subsubsection*{Step 4: Calculate $\eta^{n+1}$ and $\phi^{n+1/2}$} From this, $\eta^{n+1}$ can be calculated using \eqref{eq:etaMassBarrier}:
 \begin{equation}\label{eq:etaNPlus1}
     \eta^{n+1} = u^{n+1}-b,
 \end{equation}
@@ -152,7 +157,7 @@ where $g^n$ is again computed according to \eqref{eq:gn}. The system can, simila
 after which $\eta^{n+1}$ using \eqref{eq:etaNPlus1} and $\psi^{n+1/2}$ using \eqref{eq:psiNPlusHalf} can be calculated. 
 
 \section{Mass-spring - Mass-spring Collision}
-The initial idea for this implementation was to make the barrier in the previous section able to move. However, as the barrier would be unaffected by the mass, the energy balance would be incorrect. Imagine a baseball bat hitting a ping-pong ball. Even though the bat would not seem to be affected by the ping-pong ball, it will as some energy of the ball will be transferred into the bat. To model this behaviour, we can implement two colliding masses, one of which has a very high mass relative to the other, and to make it more interesting, we can add a restoring force to both. Assuming a mass with displacement $u = u(t)$ to be placed above a mass with displacement $w = w(t)$, the (continuous) system will look like this 
+The initial idea for this implementation was to make the barrier in the previous section able to move sinusoidally. However, as the barrier would be unaffected by the mass, the energy balance would be incorrect. Imagine a baseball bat hitting a ping-pong ball. Even though the bat would not seem to be affected by the ping-pong ball, it will as some energy of the ball will be transferred into the bat. To model this behaviour, we can implement two colliding masses, one of which has a very high mass relative to the other, and to make it more interesting, we can add a restoring force to both. Assuming a mass with displacement $u = u(t)$ to be placed above a mass with displacement $w = w(t)$, the (continuous) system will look like this 
 
 \begin{subnumcases}{}
     M_1u_{tt} &$=-M_1\omega_1^2u+\psi\psi'$\\
@@ -262,7 +267,7 @@ J(l_\text{m})=
         0, & \text{otherwise}
     \end{cases}
 \end{equation}
-and, as can be seen in \eqref{eq:massString1}, locates the collision term at $l_\text{m}$ and scales it by $1/h$ at that location. As the collision happens at only one point, i.e., is not distributed as in Section \ref{sec:stringString}, we solve the following system:
+and, as can be seen in \eqref{eq:massString1}, locates the collision term at $l_\text{m}$ and scales it by $1/h$ at that location. As the collision happens at only one point, i.e., is not distributed as in Section \ref{sec:stringString}, we solve the following system at the point $l_\text{m}$ along the string:
 \begin{align}
 \begin{bmatrix}
         u^{n+1}_{l_\text{m}}\\
@@ -293,7 +298,7 @@ Once $\eta^{n+1}$ is then calculated from this, it can be applied to the string 
     \frac{\rho A}{k^2}u^{n+1}_l = \frac{\rho A}{k^2}(2u^n_l-u_l^{n-1})+T\delta_{xx}u_l^n-EI\delta_{xxxx}u_l^n+J(l_\text{m}) \bigg(\frac{(g^n)^2}{4}(\eta^{n+1}-\eta^{n-1})+\psi^{n-1/2}g^n\bigg).
 \end{equation}
 \section{Tromba Marina}
-The tromba marina is a bowed string instrument with a rattling bridge. The system we will be looking will contain a string, a mass simulating the bridge and a barrier simulating the body of the instrument (see Figure \ref{fig:tromba}). 
+The tromba marina is a bowed string instrument with a rattling bridge. The bridge has a pivot-point right below where the string rests on the bridge and moves according to the movement of the string. The system we will be looking will contain a string, a mass simulating the bridge and a plate simulating the body of the instrument (see Figure \ref{fig:tromba}). 
 
 \begin{figure}[h]
 \centerline{\includegraphics[width=1\columnwidth]{tromba.eps}}
@@ -301,16 +306,193 @@ The tromba marina is a bowed string instrument with a rattling bridge. The syste
 \end{figure}
 
 \begin{subnumcases}{}
-    \rho A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx} + J(l_\text{br}) \big(\mu_{t+}\psi^{n-1/2}_1\big)g^n_1$ \\
-    M \delta_{tt}w^n &$=-M\omega_0^2w^n - \big(\mu_{t+}\psi^{n-1/2}_1\big)g_1^n + \big(\mu_{t+}\psi_2^{n-1/2}\big)g_2^n$\\
-    \delta_{t+}\psi^{n-1/2}_1 &$= g^n_1\delta_{t\cdot}\eta_1^n$\\
-    \delta_{t+}\psi^{n-1/2}_2 &$= g^n_2\delta_{t\cdot}\eta_2^n$\\
-    \eta_1^n &$= w^n - u_{l_\text{br}}^n$\\
-    \eta_2^n &$= b - w^n$
+    \rho_\text{s} A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx}u^n_l - J_\text{s}(l_\text{br})F_\alpha$ \\
+    M \delta_{tt}w^n &$=-M\omega_0^2w^n + \big(\mu_{t+}\psi^{n-1/2}\big)g^n + F_\alpha$\\
+    \rho_\text{p} H \delta_{tt}v^n_{(l,m)} & $ =-D\delta_{\Delta \boxplus}\delta_{\Delta \boxplus}v_{(l,m)}^n - J_\text{p}(l_\text{br},m_\text{br}) \big(\mu_{t+}\psi^{n-1/2}\big)g^n$\\
+    \delta_{t+}\psi^{n-1/2} &$= g^n\delta_{t\cdot}\eta_\text{c}^n$\\
+    \eta_c^n &$= v_{(l_\text{br},m_\text{br})}^n - w^n$\\
+    F_\alpha & $= K_1\mu_{tt}\eta_\text{s}^n + K_3(\eta_\text{s}^n)^2\mu_{t\cdot}\eta_\text{s}^n$\label{eq:fAlpha}\\
+    \eta_s^n &$= u_{l_\text{br}}^n - w^n$\label{eq:etaSpring}
 \end{subnumcases}
-As done in Section \ref{sec:massString}, the spreading operator $J$ is used to apply the effect of the mass only to grid point $l_\text{br}$ on the string.
+where $D = \frac{EH^3}{12(1-\nu^2)}$. The subscripts $\text{s}$ and $\text{p}$ for $\rho$ denote that it either belongs to the string or the plate. The subscripts $\text{s}$ and $\text{c}$ for $\eta$ denote that it either belongs to the non-linear \underline{s}pring or the \underline{c}ollision.
+As done in Section \ref{sec:massString}, the spreading operator $J_\text{s}$ is used to apply the effect of the mass only to grid point $l_\text{br}$ on the string. We now also use the 2D spreading operator $J_\text{p}$ to apply the effect of the mass to grid point $(l_\text{br}, m_\text{br})$
+
+\begin{equation}
+J_\text{p}(l_\text{br}, m_\text{br})=
+    \begin{cases}
+        1/h_\text{p}^2, & l = l_\text{br} \wedge m = m_\text{br}\\
+        0, & \text{otherwise}
+    \end{cases}
+\end{equation}
+Expanding the operators of \eqref{eq:fAlpha} and rewriting for $\eta_\text{s}$ yields:
+\begin{equation}\label{eq:etaNextSpring}
+    \eta_\text{s}^{n+1} = \frac{F_\alpha}{\Phi}-\frac{K_1\eta_\text{s}^n}{2\Phi}-\eta_\text{s}^{n-1},
+\end{equation}
+where 
+\begin{equation}
+    \Phi = \frac{K_1}{4}+\frac{K_3(\eta_\text{s}^n)^2}{2}.
+\end{equation}
+We can define intermediate states (at the bridge) $u^\text{I}_\text{br}$, $w^\text{I}$ and $v^\text{I}_{\text{br}}$ (where the subscript $\text{br}$ is short for $l_\text{br}$ and $(l_\text{br},m_\text{br})$ for the string and the plate respectively) that exclude the effects of spring and collision forces:
+\begin{subequations}\label{eq:intermediate}
+    \begin{align}
+        u^\text{I}_\text{br} &= 2u_\text{br}^n-u_\text{br}^{n-1}+\frac{Tk^2}{\rho_\text{s}A}\delta_{xx}u_\text{br}^n-\frac{EIk^2}{\rho_\text{s}A}\delta_{xxxx}u_\text{br}^n\\
+        w^\text{I} &= 2w^n-w^{n-1}-k^2\omega_0^2w^n\\
+        v^\text{I}_{\text{br}} &= 2v_{\text{br}}^n-v_{\text{br}}^{n-1}-\frac{Dk^2}{\rho_\text{p}H}\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_{\text{br}}^n
+    \end{align}
+\end{subequations}
+Then writing out \eqref{eq:etaSpring} for $\eta_\text{s}^{n+1}$ gives
+\begin{equation}\label{eq:etaNextSpringFDS}
+    \eta_\text{s}^{n+1} =u^\text{I}_\text{br}-\frac{F_\alpha k^2}{h_\text{s}\rho_\text{s}A}-\bigg(\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n + F_\alpha\bigg)/ \bigg(\frac{M}{k^2}+\frac{(g^n)^2}{4}\bigg).
+\end{equation}
+Setting Equations \eqref{eq:etaNextSpring} and \eqref{eq:etaNextSpringFDS} equal to each other, we can solve for $F_\alpha$
+\begin{align}
+    &\begin{aligned}
+        \frac{F_\alpha}{\Phi}&-\frac{K_1\eta_\text{s}^n}{2\Phi}-\eta_\text{s}^{n-1}= u^\text{I}_\text{br}-\frac{F_\alpha k^2}{h_\text{s}\rho_\text{s}A}\\
+    &-\bigg(\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n + F_\alpha\bigg)/\bigg(\frac{M}{k^2}+\frac{(g^n)^2}{4}\bigg)
+    \end{aligned}\\
+    &\begin{aligned}
+    \Psi F_\alpha &= \frac{K_1\eta_\text{s}^n}{2\Phi}+\eta_\text{c}^{n-1}+ u^\text{I}_\text{br}\\
+    &-\bigg(\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n\bigg)/ \bigg(\frac{M}{k^2}+\frac{(g^n)^2}{4}\bigg)
+    \end{aligned}
+\end{align}
+where 
+\begin{equation}
+    \Psi = \frac{1}{\Phi} + \frac{k^2}{h_\text{s}\rho_\text{s}A}+\frac{1}{\frac{M}{k^2}+\frac{(g^n)^2}{4}}.
+\end{equation}
+If we factor out the effect of unknown $v_\text{br}^{n+1}$ we get
+\begin{equation}
+\begin{aligned}
+    F_\alpha &= F_\alpha'- \Theta v_{\text{br}}^{n+1} \quad \text{where}\\
+    F_\alpha' &= \Bigg(\frac{K_1\eta_\text{s}^n}{2\Phi}+\eta_\text{s}^{n-1}+ u^\text{I}_\text{br}
+    -\bigg(\frac{M}{k^2}w^\text{I}-\frac{(g^n)^2}{4}\eta_\text{c}^{n-1} + \psi^{n-1/2}g^n\bigg)/ \bigg(\frac{M}{k^2}+\frac{(g^n)^2}{4}\bigg)\Bigg) / \Psi \nonumber \\
+    \text{and} \quad \Theta &= \frac{\frac{(g^n)^2}{4}}{\Psi(\frac{M}{k^2}+\frac{(g^n)^2}{4})}
+    \end{aligned}
+\end{equation}
+The complete system can then be solved for the bridge by
+
+\begin{align}
+\begin{bmatrix}
+        u^{n+1}_{l_\text{br}}\\
+        w^{n+1}\\
+        v^{n+1}_{(l_\text{br}, m_\text{br})}
+    \end{bmatrix}
+    = 
+    \mathbf{A}^{-1}\mathbf{v}
+\end{align}
+where
+\begin{equation}
+\begin{gathered}
+\mathbf{A} = 
+    \begin{bmatrix}
+        \frac{\rho_\text{s} A}{k^2} & 0 & - \frac{\Theta}{h_\text{s}}\\
+        0 & \frac{M}{k^2}+\frac{(g^n)^2}{4} &\Theta-\frac{(g^n)^2}{4}\\
+        0 & -\frac{(g^n)^2}{4h_\text{p}^2} & \frac{\rho_\text{p}H}{k^2} + \frac{(g^n)^2}{4h_\text{p}^2}
+    \end{bmatrix}
+    \quad \text{and}\\
+    \mathbf{v} = 
+    \begin{bmatrix}
+        \frac{\rho_\text{s} A}{k^2}(2u^n_\text{br}-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n - F_\alpha'/h_\text{s}\\
+        \frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n-\frac{(g^n)^2}{4}\eta^{n-1}+\psi^{n-1/2}g^n + F_\alpha'\\
+        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+\Big(\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
+    \end{bmatrix}
+    \nonumber
+\end{gathered}
+\end{equation}
+
+\subsection{Adding damping}
+Damping can be added to the string, mass and plate. This results in the following system:
+\begin{subnumcases}{}
+    \rho_\text{s} A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx}u^n_l - 2\sigma_{0, \text{s}}\delta_{t\cdot}u^n_l + 2\sigma_{1, \text{s}}\delta_{t-}\delta_{xx}u_l^n - J_\text{s}(l_\text{br})F_\alpha$ \\
+    M \delta_{tt}w^n &$=-M\omega_0^2w^n - R \delta_{t\cdot}w^n+ \big(\mu_{t+}\psi^{n-1/2}\big)g^n + F_\alpha$\\
+    \begin{aligned}
+    &\rho_\text{p} H \delta_{tt}v^n_{(l,m)}\\ 
+    & 
+    \end{aligned}
+    & $\begin{aligned} 
+    =&-D\delta_{\Delta \boxplus}\delta_{\Delta \boxplus}v_{(l,m)}^n - 2\sigma_{0, \text{p}}\delta_{t\cdot}v^n_{(l,m)} + 2\sigma_{1, \text{p}}\delta_{t-}\delta_{\Delta\boxplus}v_l^n \\
+    &- J_\text{p}(l_\text{br},m_\text{br}) \big(\mu_{t+}\psi^{n-1/2}\big)g^n
+    \end{aligned}$\\
+    \delta_{t+}\psi^{n-1/2} &$= g^n\delta_{t\cdot}\eta_\text{c}^n$\\
+    \eta_c^n &$= v_{(l_\text{br},m_\text{br})}^n - w^n$\\
+    F_\alpha & $= K_1\mu_{tt}\eta_\text{s}^n + K_3(\eta_\text{s}^n)^2\mu_{t\cdot}\eta_\text{s}^n + 2 \sigma_\times\delta_{t\cdot}\eta_\text{s}^n$\label{eq:fAlphaDamp}\\
+    \eta_s^n &$= u_{l_\text{br}}^n - w^n$\label{eq:etaSpringDamp}
+\end{subnumcases}
+where $\sigma_0$ and $\sigma_1$ are frequency independent and frequency dependent damping coefficients and $R$ is a damping coefficient for the bridge (mass). If we, like in \eqref{eq:etaNextSpring}, solve for $\eta_\text{s}^{n+1}$, this gives
+\begin{equation}
+    \eta^{n+1}_\text{s} = \frac{F_\alpha - K_1\eta^n_\text{s} / 2  - \Phi_-\eta_\text{s}^{n-1}}{\Phi_+}
+\end{equation}
+where
+\begin{equation}
+    \Phi_+ = \frac{K_1}{4}+\frac{K_3(\eta^n_\text{s})^2}{2} + \frac{\sigma_\times}{k} \quad \text{and} \quad \Phi_- = \frac{K_1}{4}+\frac{K_3(\eta^n_\text{s})^2}{2} - \frac{\sigma_\times}{k}.
+\end{equation}
+As some of the added terms include the state (of a grid point) at the next sample ($n+1$), we add the terms to and slightly rewrite \eqref{eq:intermediate} to yield
+
+\begin{subequations}\label{eq:intermediateDamp}
+    \begin{align}
+        u^\text{I}_\text{br} = &\Big(\frac{\rho_\text{s} A}{k^2}(2u_\text{br}^n-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + \frac{\sigma_{0,\text{s}}}{k}u_\text{br}^{n-1} + 2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u^n_\text{br}\Big)\\
+        &/ \Big(\frac{\rho_\text{s}A}{k^2} + \frac{\sigma_{0,\text{s}}}{k}\Big) \nonumber\\
+        w^\text{I} = & \Big(\frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n+\frac{R}{2k}w^{n-1}\Big) / \Big(\frac{M}{k^2} + \frac{R}{2k}\Big)\\
+        v^\text{I}_{\text{br}} =& \Big(\frac{\rho_\text{p}H}{k^2}(2v_{\text{br}}^n-v_{\text{br}}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_{\text{br}}^n+\frac{\sigma_{0,\text{p}}}{k}v^{n-1}_\text{br}+ 2\sigma_{1,\text{p}}\delta_{t-}\delta_{xx}v^n_\text{br}\Big)/\Big(\frac{\rho_\text{p}H}{k^2}+\frac{\sigma_{0,\text{p}}}{k}\Big)
+    \end{align}
+\end{subequations}
+\textbf{$\Leftarrow$ probably don't include the divisions here as that will already happen when doing the matrix division}\\
+Solving for $F_\alpha$ yields
+\begin{align}
+    F_\alpha = &F'_\alpha - \Theta v^{n+1}_\text{br} \quad \text{where}\\
+    F_\alpha' =& \Bigg(\frac{K_1\eta^n_\text{s}}{2\Phi_+}+\frac{\Phi_-}{\Phi_+}\eta_\text{s}^{n-1}+u^\text{I}_\text{br}-\bigg(\Big(\frac{M}{k^2}+\frac{R}{2k}\Big)w^\text{I}+\frac{(g^n)^2}{4}(v_\text{br}^{n+1}-\eta_\text{c}^{n-1})+\psi^{n-1/2}g^n\bigg)\\
+    &/\bigg(\frac{M}{k^2}+\frac{R}{2k}+\frac{(g^n)^2}{4}\bigg)\Bigg)/\Psi\\
+    \text{and} \quad \quad \Theta &= \frac{\frac{(g^n)^2}{4}}{\Psi(\frac{M}{k^2} + \frac{R}{2k} + \frac{(g^n)^2}{4})}\quad =\quad \frac{(g^n)^2 k^2}{\Psi (4M+2Rk+(g^n)^2k^2)},
+\end{align}
+where 
+\begin{equation}
+    \Psi = \frac{1}{\Phi_+} +  \frac{k^2}{h_\text{s}\rho_\text{s}A}+\frac{1}{\frac{M}{k^2}+\frac{(g^n)^2}{4}}.
+\end{equation}
+
+The force excluding the effect of unknown $v_\text{br}^{n+1}$ $F_\alpha'$ can be rewritten to a formula with only one division:
+\begin{align}
+    F_\alpha' &= \frac{(4M+2Rk + (g^n)^2k^2)(2kK_1\eta_\text{s}^n+\phi_-\eta_\text{s}^{n-1} +\phi_+u^\text{I}_\text{br}) - \phi_+\Big((4M+2Rk)w^\text{I} - (g^n)^2k^2\eta_\text{c}^{n-1} + 4k^2\psi^{n-1/2}g^n\Big)}{\phi_+\Psi(4M+2Rk + (g^n)^2k^2)}\\
+    &\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!= \frac{(h_\text{s}\rho_\text{s}A\phi_+(4M+(g^n)^2k^2))\Big[(4M+2Rk+(g^n)^2k^2)(2kK_1\eta_\text{s}^n+\phi_-\eta_\text{s}^{n-1}+\phi_+u_\text{br}^\text{I})-\phi_+\Big((4M+2Rk)w^\text{I}-(g^n)^2k^2\eta_\text{c}^{n-1}+4k^2\psi^{n-1/2}g^n\Big)\Big]}{\phi_+\Big((4kh_\text{s}\rho_\text{s}A+k^2\phi_+)(4M+(g^n)^2k^2)+4k^2h_\text{s}\rho_\text{s}A\phi_+\Big)(4M + 2Rk + (g^n)^2k^2)}
+\end{align}
+where 
+\begin{equation}
+    \phi_+ = k (K_1 + 2 K_3 (\eta_\text{s})^2) + 4 \sigma_\times \quad \text{and} \quad \phi_- = k (K_1 + 2 K_3 (\eta_\text{s})^2) - 4 \sigma_\times
+\end{equation}
+The complete system can then be solved for the bridge by
+
+\begin{align}
+\begin{bmatrix}
+        u^{n+1}_{l_\text{br}}\\
+        w^{n+1}\\
+        v^{n+1}_{(l_\text{br}, m_\text{br})}
+    \end{bmatrix}
+    = 
+    \mathbf{A}^{-1}\mathbf{v}
+\end{align}
+where
+\begin{equation}
+\begin{gathered}
+\mathbf{A} = 
+    \begin{bmatrix}
+        \frac{\rho_\text{s} A}{k^2} + \frac{\sigma_{0,\text{s}}}{k} & 0 & - \frac{\Theta}{h_\text{s}}\\
+        0 & \frac{M}{k^2}+\frac{R}{2k}+\frac{(g^n)^2}{4} &\Theta-\frac{(g^n)^2}{4}\\
+        0 & -\frac{(g^n)^2}{4h_\text{p}^2} & \frac{\rho_\text{p}H}{k^2} + \frac{\sigma_{0,\text{p}}}{k} + \frac{(g^n)^2}{4h_\text{p}^2}
+    \end{bmatrix}
+    \quad \text{and}\\
+    \mathbf{v} = 
+    \begin{bmatrix}
+        \frac{\rho_\text{s} A}{k^2}(2u^n_\text{br}-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + 2\sigma_{0,\text{s}}u_\text{br}^{n-1} + 2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u_\text{br}^n - F_\alpha'/h_\text{s}\\
+        \frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n + \frac{R}{2k}w^{n-1}-\frac{(g^n)^2}{4}\eta^{n-1}+\psi^{n-1/2}g^n + F_\alpha'\\
+        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+ \sigma_{0,\text{p}}v^{n-1}_\text{br} + 2\sigma_{1,\text{p}}\delta_{t-}\delta_{\Delta\boxplus}v^n_\text{br} + \Big(\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
+    \end{bmatrix}
+    \nonumber
+\end{gathered}
+\end{equation}
+\subsection{Energy Analysis}
+
+\section{Conclusion}
+Using the tools described in this chapter, you can build any system of elements (strings, masses, barriers) and let them collide.
 \subsection{Implementation}
-Equation \eqref{eq:etaPlus} can be implemented using Matlab's \texttt{subplot} function.
+Equation \eqref{eq:etaPlus} can be implemented using Matlab's \texttt{subplus} function.
 
 \bibliographystyle{plain}
 \bibliography{references}
