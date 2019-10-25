@@ -30,7 +30,7 @@
 \section{Introduction}
 This document shows several examples of non-linearities in physical modelling based on a method recently published by Michele Ducceschi in \cite{Ducceschi2019}.
 
-Energy analysis proves to be a handy tool for verifying whether the devised system is stable or not.
+%Energy analysis proves to be a handy tool for verifying whether the devised system is stable or not.
 
 \section{Preabmble: Mass-barrier collision}
 The simplest collision case is a mass colliding with a rigid barrier. Imagine a mass at location $u = u(t)$ colliding with a barrier at location $b$. If the barrier is placed above\footnote{When talking about an element being `above' or `below' another in this context, what is meant is a more positive or negative displacement, i.e., a mass with a displacement of 0.01 will be `above' a barrier with a displacement of -0.05. Along these lines, a positive force acting on an element will accelerate it upwards and a negative force will accelerate it downwards.} the mass, the force it exerts on the mass will be negative and its system would be described as
@@ -50,7 +50,7 @@ describes the positive part of $\eta$ (see Figure \ref{fig:eta}). This can be in
 
 \noindent The second term can be rewritten to 
 \begin{equation}\label{eq:derivPotential}
-    \phi'(\eta) = \frac{d\phi(\eta)}{d\eta}\overset{\text{chain rule}}{\xrightarrow{\hspace*{1.4cm}}}  \frac{\dot{\phi}(\eta)}{\dot{\eta}} =  K[\eta]_+^\alpha
+    \phi'(\eta) = \frac{d\phi(\eta)}{d\eta}\overset{\text{chain rule}}{\xrightarrow{\hspace*{1.4cm}}}  \frac{d\phi}{dt}\frac{dt}{d\eta} = \frac{\left(\frac{d\phi}{dt}\right)}{\left(\frac{d\eta}{dt}\right)}=\frac{\dot{\phi}(\eta)}{\dot{\eta}} =  K[\eta]_+^\alpha
 \end{equation}
 where
 \begin{equation}\label{eq:potential}
@@ -104,7 +104,7 @@ The first step is to calculate $g^n$ using its analytic derivative
 \end{equation}
 which, using \eqref{eq:derivPotential} and \eqref{eq:potential}, can conveniently be rewritten to
 \begin{equation}\label{eq:gn}
-    g^n = \frac{K[\eta^n]_+^\alpha}{\sqrt{\frac{2K}{\alpha+1}[\eta^n]_+^{\alpha+1}}}=\sqrt{\frac{K(\alpha+1)}{2}}[\eta^n]_+^{\frac{\alpha-1}{2}}\ .
+    g^n = \frac{K[\eta^n]_+^\alpha}{\sqrt{\frac{2K}{\alpha+1}[\eta^n]_+^{\alpha+1}}}=K\sqrt{\frac{\alpha+1}{2K}}[\eta^n]_+^\alpha[\eta^n]_+^{\frac{-(\alpha+1)}{2}}=\sqrt{\frac{K(\alpha+1)}{2}}[\eta^n]_+^{\frac{\alpha-1}{2}}\ .
 \end{equation}
 \subsubsection*{Step 2: Substitution of identity for $\mu_{t+}\psi^{n-1/2}$}
 Using the following identity
@@ -305,7 +305,7 @@ The tromba marina is a bowed string instrument with a rattling bridge. The bridg
 \caption{\label{fig:tromba}{The tromba marina system: a string, a bridge (mass) and body (rigid barrier).}}
 \end{figure}
 
-\begin{subnumcases}{}
+\begin{subnumcases}{\label{eq:trombaSystem}}
     \rho_\text{s} A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx}u^n_l - J_\text{s}(l_\text{br})F_\alpha$ \\
     M \delta_{tt}w^n &$=-M\omega_0^2w^n + \big(\mu_{t+}\psi^{n-1/2}\big)g^n + F_\alpha$\\
     \rho_\text{p} H \delta_{tt}v^n_{(l,m)} & $ =-D\delta_{\Delta \boxplus}\delta_{\Delta \boxplus}v_{(l,m)}^n - J_\text{p}(l_\text{br},m_\text{br}) \big(\mu_{t+}\psi^{n-1/2}\big)g^n$\\
@@ -332,28 +332,38 @@ where
 \begin{equation}
     \Phi = \frac{K_1}{4}+\frac{K_3(\eta_\text{s}^n)^2}{2}.
 \end{equation}
-We can define intermediate states (at the bridge) $u^\text{I}_\text{br}$, $w^\text{I}$ and $v^\text{I}_{\text{br}}$ (where the subscript $\text{br}$ is short for $l_\text{br}$ and $(l_\text{br},m_\text{br})$ for the string and the plate respectively) that exclude the effects of spring and collision forces:
+We can define intermediate states (at the bridge) for the connected components, i.e., $u^\text{I}_\text{br}$ and $w^\text{I}$ (where the subscript $\text{br}$ is short for $l_\text{br}$) that exclude the effects of spring and collision forces:
 \begin{subequations}\label{eq:intermediate}
     \begin{align}
         u^\text{I}_\text{br} &= 2u_\text{br}^n-u_\text{br}^{n-1}+\frac{Tk^2}{\rho_\text{s}A}\delta_{xx}u_\text{br}^n-\frac{EIk^2}{\rho_\text{s}A}\delta_{xxxx}u_\text{br}^n\\
-        w^\text{I} &= 2w^n-w^{n-1}-k^2\omega_0^2w^n\\
-        v^\text{I}_{\text{br}} &= 2v_{\text{br}}^n-v_{\text{br}}^{n-1}-\frac{Dk^2}{\rho_\text{p}H}\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_{\text{br}}^n
+        w^\text{I} &= 2w^n-w^{n-1}-k^2\omega_0^2w^n%\\
+        % v^\text{I}_{\text{br}} &= 2v_{\text{br}}^n-v_{\text{br}}^{n-1}-\frac{Dk^2}{\rho_\text{p}H}\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_{\text{br}}^n \label{eq:noDampPlateIntermediate}
     \end{align}
 \end{subequations}
+Then, looking at the full system in \eqref{eq:trombaSystem} we get that
+\begin{subequations}\label{eq:systemNP1NoDamp}
+    \begin{align}
+        u_\text{br}^{n+1}&=u_\text{br}^\text{I} - \frac{F_\alpha k^2}{h_\text{s}\rho_\text{s}A}\\
+        w^{n+1} &= w^\text{I} + \frac{k^2}{M}\big((\mu_{t+}\psi^{n-1/2})g^n + F_\alpha\big)\label{eq:massNP1}\\
+        % v_\text{br}^{n+1} &= v_\text{br}^\text{I} - \frac{k^2}{h_\text{p}^2\rho_\text{p}H}\big(\mu_{t+}\psi^{n-1/2}\big)g^n\label{eq:plateNP1}
+    \end{align}
+\end{subequations}
+% (we do not need \eqref{eq:plateNP1} here, but has been written down for clarity). 
+As the $(\mu_{t+}\psi^{n-1/2})$-term in \eqref{eq:massNP1} also contains $w^{n+1}$ we need to solve for this
+\begin{align}\label{eq:solveForNP1}
+    \frac{M}{k^2}w^{n+1} &= \frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(\eta_\text{c}^{n+1}-\eta_\text{c}^{n-1})+\psi^{n-1/2}g^n+F_\alpha\nonumber\\
+    \frac{M}{k^2}w^{n+1} &= \frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}\big((v^{n+1}_\text{br} - w^{n+1}\big)-\eta_\text{c}^{n-1})+\psi^{n-1/2}g^n+F_\alpha\nonumber\\
+    \left(\frac{M}{k^2}+\frac{(g^n)^2}{4}\right)w^{n+1} &= \frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v^{n+1}_\text{br}-\eta_\text{c}^{n-1})+\psi^{n-1/2}g^n+F_\alpha\nonumber\\
+    w^{n+1} &= \frac{\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v^{n+1}_\text{br}-\eta_\text{c}^{n-1})+\psi^{n-1/2}g^n+F_\alpha}{\frac{M}{k^2}+\frac{(g^n)^2}{4}}
+\end{align}
 Then writing out \eqref{eq:etaSpring} for $\eta_\text{s}^{n+1}$ gives
 \begin{equation}\label{eq:etaNextSpringFDS}
-    \eta_\text{s}^{n+1} =u^\text{I}_\text{br}-\frac{F_\alpha k^2}{h_\text{s}\rho_\text{s}A}-\bigg(\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n + F_\alpha\bigg)/ \bigg(\frac{M}{k^2}+\frac{(g^n)^2}{4}\bigg).
+    \eta_\text{s}^{n+1} =u^\text{I}_\text{br}-\frac{F_\alpha k^2}{h_\text{s}\rho_\text{s}A}-\frac{\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n + F_\alpha}{\frac{M}{k^2}+\frac{(g^n)^2}{4}}.
 \end{equation}
 Setting Equations \eqref{eq:etaNextSpring} and \eqref{eq:etaNextSpringFDS} equal to each other, we can solve for $F_\alpha$
 \begin{align}
-    &\begin{aligned}
-        \frac{F_\alpha}{\Phi}&-\frac{K_1\eta_\text{s}^n}{2\Phi}-\eta_\text{s}^{n-1}= u^\text{I}_\text{br}-\frac{F_\alpha k^2}{h_\text{s}\rho_\text{s}A}\\
-    &-\bigg(\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n + F_\alpha\bigg)/\bigg(\frac{M}{k^2}+\frac{(g^n)^2}{4}\bigg)
-    \end{aligned}\\
-    &\begin{aligned}
-    \Psi F_\alpha &= \frac{K_1\eta_\text{s}^n}{2\Phi}+\eta_\text{c}^{n-1}+ u^\text{I}_\text{br}\\
-    &-\bigg(\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n\bigg)/ \bigg(\frac{M}{k^2}+\frac{(g^n)^2}{4}\bigg)
-    \end{aligned}
+        \frac{F_\alpha}{\Phi}-\frac{K_1\eta_\text{s}^n}{2\Phi}-\eta_\text{s}^{n-1}&= u^\text{I}_\text{br}-\frac{F_\alpha k^2}{h_\text{s}\rho_\text{s}A}-\frac{\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n + F_\alpha}{\frac{M}{k^2}+\frac{(g^n)^2}{4}}\nonumber\\
+    \Psi F_\alpha &= \frac{K_1\eta_\text{s}^n}{2\Phi}+\eta_\text{c}^{n-1}+ u^\text{I}_\text{br}-\frac{\frac{M}{k^2}w^\text{I}+\frac{(g^n)^2}{4}(v_{\text{br}}^{n+1}-\eta_\text{c}^{n-1}) + \psi^{n-1/2}g^n}{\frac{M}{k^2}+\frac{(g^n)^2}{4}}
 \end{align}
 where 
 \begin{equation}
@@ -364,7 +374,7 @@ If we factor out the effect of unknown $v_\text{br}^{n+1}$ we get
 \begin{aligned}
     F_\alpha &= F_\alpha'- \Theta v_{\text{br}}^{n+1} \quad \text{where}\\
     F_\alpha' &= \Bigg(\frac{K_1\eta_\text{s}^n}{2\Phi}+\eta_\text{s}^{n-1}+ u^\text{I}_\text{br}
-    -\bigg(\frac{M}{k^2}w^\text{I}-\frac{(g^n)^2}{4}\eta_\text{c}^{n-1} + \psi^{n-1/2}g^n\bigg)/ \bigg(\frac{M}{k^2}+\frac{(g^n)^2}{4}\bigg)\Bigg) / \Psi \nonumber \\
+    -\frac{\frac{M}{k^2}w^\text{I}-\frac{(g^n)^2}{4}\eta_\text{c}^{n-1} + \psi^{n-1/2}g^n}{\frac{M}{k^2}+\frac{(g^n)^2}{4}}\Bigg) / \Psi \nonumber \\
     \text{and} \quad \Theta &= \frac{\frac{(g^n)^2}{4}}{\Psi(\frac{M}{k^2}+\frac{(g^n)^2}{4})}
     \end{aligned}
 \end{equation}
@@ -392,8 +402,8 @@ where
     \mathbf{v} = 
     \begin{bmatrix}
         \frac{\rho_\text{s} A}{k^2}(2u^n_\text{br}-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n - F_\alpha'/h_\text{s}\\
-        \frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n-\frac{(g^n)^2}{4}\eta^{n-1}+\psi^{n-1/2}g^n + F_\alpha'\\
-        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+\Big(\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
+        \frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n-\frac{(g^n)^2}{4}\eta_\text{c}^{n-1}+\psi^{n-1/2}g^n + F_\alpha'\\
+        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+\Big(\frac{(g^n)^2}{4}\eta_\text{c}^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
     \end{bmatrix}
     \nonumber
 \end{gathered}
@@ -418,7 +428,7 @@ Damping can be added to the string, mass and plate. This results in the followin
     \eta_s^n &$= u_{l_\text{br}}^n - w^n$\label{eq:etaSpringDamp}
 \end{subnumcases}
 where $\sigma_0$ and $\sigma_1$ are frequency independent and frequency dependent damping coefficients and $R$ is a damping coefficient for the bridge (mass). If we, like in \eqref{eq:etaNextSpring}, solve for $\eta_\text{s}^{n+1}$, this gives
-\begin{equation}
+\begin{equation}\label{eq:etaSpringNextDamp}
     \eta^{n+1}_\text{s} = \frac{F_\alpha - K_1\eta^n_\text{s} / 2  - \Phi_-\eta_\text{s}^{n-1}}{\Phi_+}
 \end{equation}
 where
@@ -429,29 +439,48 @@ As some of the added terms include the state (of a grid point) at the next sampl
 
 \begin{subequations}\label{eq:intermediateDamp}
     \begin{align}
-        u^\text{I}_\text{br} = &\Big(\frac{\rho_\text{s} A}{k^2}(2u_\text{br}^n-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + \frac{\sigma_{0,\text{s}}}{k}u_\text{br}^{n-1} + 2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u^n_\text{br}\Big)\\
-        &/ \Big(\frac{\rho_\text{s}A}{k^2} + \frac{\sigma_{0,\text{s}}}{k}\Big) \nonumber\\
-        w^\text{I} = & \Big(\frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n+\frac{R}{2k}w^{n-1}\Big) / \Big(\frac{M}{k^2} + \frac{R}{2k}\Big)\\
-        v^\text{I}_{\text{br}} =& \Big(\frac{\rho_\text{p}H}{k^2}(2v_{\text{br}}^n-v_{\text{br}}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_{\text{br}}^n+\frac{\sigma_{0,\text{p}}}{k}v^{n-1}_\text{br}+ 2\sigma_{1,\text{p}}\delta_{t-}\delta_{xx}v^n_\text{br}\Big)/\Big(\frac{\rho_\text{p}H}{k^2}+\frac{\sigma_{0,\text{p}}}{k}\Big)
+        u^\text{I}_\text{br}& = \frac{\frac{\rho_\text{s} A}{k^2}(2u_\text{br}^n-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + \frac{\sigma_{0,\text{s}}}{k}u_\text{br}^{n-1} + 2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u^n_\text{br}}{\frac{\rho_\text{s}A}{k^2} + \frac{\sigma_{0,\text{s}}}{k}} \\
+        w^\text{I} & = \frac{\frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n+\frac{R}{2k}w^{n-1}}{\frac{M}{k^2} + \frac{R}{2k}}\\
+        v^\text{I}_{\text{br}} & = \frac{\frac{\rho_\text{p}H}{k^2}(2v_{\text{br}}^n-v_{\text{br}}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_{\text{br}}^n+\frac{\sigma_{0,\text{p}}}{k}v^{n-1}_\text{br}+ 2\sigma_{1,\text{p}}\delta_{t-}\delta_{xx}v^n_\text{br}}{\frac{\rho_\text{p}H}{k^2}+\frac{\sigma_{0,\text{p}}}{k}}
     \end{align}
 \end{subequations}
 \textbf{$\Leftarrow$ probably don't include the divisions here as that will already happen when doing the matrix division}\\
-Solving for $F_\alpha$ yields
+and similarly to \eqref{eq:systemNP1NoDamp} we can rewrite the individual connected parts of the system at $n+1$ as
+\begin{subequations}
+\begin{align}
+    u_\text{br}^{n+1}&=u_\text{br}^\text{I} - \frac{F_\alpha}{h_\text{s}(\frac{\rho_\text{s}A}{k^2}+\frac{\sigma_{0,\text{s}}}{k})}\\
+        w^{n+1} &= w^\text{I} + \frac{(\mu_{t+}\psi^{n-1/2})g^n + F_\alpha}{\frac{M}{k^2}+\frac{R}{2k}}\label{eq:wNP1Damp}%\\
+        % v_\text{br}^{n+1} &= v_\text{br}^\text{I} - \frac{\big(\mu_{t+}\psi^{n-1/2}\big)g^n}{h_\text{p}^2(\frac{\rho_\text{p}H}{k^2}+\frac{\sigma_{0,\text{p}}}{k})}
+        \end{align}
+\end{subequations}
+and in a similar fashion as \eqref{eq:solveForNP1}, we solve \eqref{eq:wNP1Damp} for $w^{n+1}$:
+\begin{equation}
+    w^{n+1} = \frac{\left(\frac{M}{k^2}+\frac{R}{2k}\right)w^\text{I}-\frac{(g^n)^2}{4}\eta_\text{c}^{n-1}+\psi^{n-1/2}g^n+F_\alpha}{\frac{M}{k^2}+\frac{R}{2k}+\frac{(g^n)^2}{4}}
+\end{equation}
+Setting \eqref{eq:etaSpringDamp} (at $n+1$) and \eqref{eq:etaSpringNextDamp} equal to each other and solving for $F_\alpha$ yields
 \begin{align}
     F_\alpha = &F'_\alpha - \Theta v^{n+1}_\text{br} \quad \text{where}\\
-    F_\alpha' =& \Bigg(\frac{K_1\eta^n_\text{s}}{2\Phi_+}+\frac{\Phi_-}{\Phi_+}\eta_\text{s}^{n-1}+u^\text{I}_\text{br}-\bigg(\Big(\frac{M}{k^2}+\frac{R}{2k}\Big)w^\text{I}+\frac{(g^n)^2}{4}(v_\text{br}^{n+1}-\eta_\text{c}^{n-1})+\psi^{n-1/2}g^n\bigg)\\
-    &/\bigg(\frac{M}{k^2}+\frac{R}{2k}+\frac{(g^n)^2}{4}\bigg)\Bigg)/\Psi\\
+    F_\alpha' =& \Bigg(\frac{K_1\eta^n_\text{s}}{2\Phi_+}+\frac{\Phi_-}{\Phi_+}\eta_\text{s}^{n-1}+u^\text{I}_\text{br}-\frac{\Big(\frac{M}{k^2}+\frac{R}{2k}\Big)w^\text{I}-\frac{(g^n)^2}{4}\eta_\text{c}^{n-1}+\psi^{n-1/2}g^n}{\frac{M}{k^2}+\frac{R}{2k}+\frac{(g^n)^2}{4}}\Bigg)/\Psi\\
     \text{and} \quad \quad \Theta &= \frac{\frac{(g^n)^2}{4}}{\Psi(\frac{M}{k^2} + \frac{R}{2k} + \frac{(g^n)^2}{4})}\quad =\quad \frac{(g^n)^2 k^2}{\Psi (4M+2Rk+(g^n)^2k^2)},
 \end{align}
 where 
 \begin{equation}
-    \Psi = \frac{1}{\Phi_+} +  \frac{k^2}{h_\text{s}\rho_\text{s}A}+\frac{1}{\frac{M}{k^2}+\frac{(g^n)^2}{4}}.
+    \Psi = \frac{1}{\Phi_+} +  \frac{1}{h_\text{s}\Big(\frac{\rho_\text{s}A}{k^2} + \frac{\sigma_0}{k}\Big)}+\frac{1}{\frac{M}{k^2}+\frac{R}{2k} + \frac{(g^n)^2}{4}}.
 \end{equation}
 
-The force excluding the effect of unknown $v_\text{br}^{n+1}$ $F_\alpha'$ can be rewritten to a formula with only one division:
-\begin{align}
-    F_\alpha' &= \frac{(4M+2Rk + (g^n)^2k^2)(2kK_1\eta_\text{s}^n+\phi_-\eta_\text{s}^{n-1} +\phi_+u^\text{I}_\text{br}) - \phi_+\Big((4M+2Rk)w^\text{I} - (g^n)^2k^2\eta_\text{c}^{n-1} + 4k^2\psi^{n-1/2}g^n\Big)}{\phi_+\Psi(4M+2Rk + (g^n)^2k^2)}\\
-    &\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!= \frac{(h_\text{s}\rho_\text{s}A\phi_+(4M+(g^n)^2k^2))\Big[(4M+2Rk+(g^n)^2k^2)(2kK_1\eta_\text{s}^n+\phi_-\eta_\text{s}^{n-1}+\phi_+u_\text{br}^\text{I})-\phi_+\Big((4M+2Rk)w^\text{I}-(g^n)^2k^2\eta_\text{c}^{n-1}+4k^2\psi^{n-1/2}g^n\Big)\Big]}{\phi_+\Big((4kh_\text{s}\rho_\text{s}A+k^2\phi_+)(4M+(g^n)^2k^2)+4k^2h_\text{s}\rho_\text{s}A\phi_+\Big)(4M + 2Rk + (g^n)^2k^2)}
+The force excluding the effect of unknown $v_\text{br}^{n+1}$, $F_\alpha'$, can be rewritten to a formula with only one division:
+\begin{align}\label{eq:fAlphaOneDivision}
+    F_\alpha' &= \frac{\begin{gathered}(4M+ 2Rk + (g^n)^2k^2)(2kK_1\eta_\text{s}^n+\phi_-\eta_\text{s}^{n-1} +\phi_+u^\text{I}_\text{br}) \\
+    - \phi_+\Big((4M+2Rk)w^\text{I} - (g^n)^2k^2\eta_\text{c}^{n-1} + 4k^2\psi^{n-1/2}g^n\Big)\end{gathered}}{\phi_+\Psi(4M+2Rk + (g^n)^2k^2)}\\
+    &=\frac{\left\{
+    \begin{gathered}
+    \phi_+h_\text{s}(\rho_\text{s}A+\sigma_0k)(4M+(g^n)^2k^2)\Big[(4M+2Rk+(g^n)^2k^2)(2kK_1\eta_\text{s}^n+\phi_-\eta_\text{s}^{n-1}+\phi_+u_\text{br}^\text{I})\\
+    -\phi_+\Big((4M+2Rk)w^\text{I}-(g^n)^2k^2\eta_\text{c}^{n-1}+4k^2\psi^{n-1/2}g^n\Big)\Big]
+    \end{gathered}
+    \right\}}{
+    \left\{\begin{gathered}\phi_+(4M+2Rk+(g^n)^2k^2)\bigg[\phi_+k^2\Big(4M + 2Rk +(g^n)^2k^2 + 4h_\text{s}(\rho_\text{s}A+\sigma_0k)\Big)+\\
+    4k\Big(h_\text{s}(\rho_\text{s}A+\sigma_0k)\Big)(4M+2Rk +(g^n)^2k^2)\bigg]
+    \end{gathered}\right\}}
 \end{align}
 where 
 \begin{equation}
@@ -480,13 +509,57 @@ where
     \quad \text{and}\\
     \mathbf{v} = 
     \begin{bmatrix}
-        \frac{\rho_\text{s} A}{k^2}(2u^n_\text{br}-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + 2\sigma_{0,\text{s}}u_\text{br}^{n-1} + 2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u_\text{br}^n - F_\alpha'/h_\text{s}\\
+        \frac{\rho_\text{s} A}{k^2}(2u^n_\text{br}-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + \frac{\sigma_{0,\text{s}}}{k}u_\text{br}^{n-1} + 2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u_\text{br}^n - \frac{F_\alpha'}{h_\text{s}}\\
         \frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n + \frac{R}{2k}w^{n-1}-\frac{(g^n)^2}{4}\eta^{n-1}+\psi^{n-1/2}g^n + F_\alpha'\\
-        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+ \sigma_{0,\text{p}}v^{n-1}_\text{br} + 2\sigma_{1,\text{p}}\delta_{t-}\delta_{\Delta\boxplus}v^n_\text{br} + \Big(\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
+        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+ \frac{\sigma_{0,\text{p}}}{k}v^{n-1}_\text{br} + 2\sigma_{1,\text{p}}\delta_{t-}\delta_{\Delta\boxplus}v^n_\text{br} + \Big(\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
     \end{bmatrix}
     \nonumber
 \end{gathered}
 \end{equation}
+\subsection{Writing for C++}
+An essential aspect of real-time sound synthesis is to reduce the number of operations as much as possible. 
+\begin{itemize}
+    \item Precalculating time-invariant variables
+    \item Group changing variables together
+\end{itemize}
+The following equations are identical to the ones found in \eqref{eq:intermediateDamp} but with the grid variables ($u_l^n$) factored out (rewritten to have the least amount of operations). Using the following short hand notations
+\begin{equation}
+\lambda^2 \triangleq \frac{Tk^2}{\rho_\text{s}Ah^2}\ , \quad \mu_\text{s}^2 \triangleq \frac{EIk^2}{\rho_\text{s}Ah^4},\ \quad \mu_\text{p}^2 \triangleq \frac{Dk^2}{\rho_\text{s}Hh^4}
+\end{equation}
+and for the plate grid functions
+\begin{equation}
+    \begin{aligned}
+    v_\text{br}^n &\triangleq v_{l_\text{br},m_\text{br}}^n\\
+    v_{\text{br}\pm1}^n &\triangleq (v_{l_\text{br}+1,m_\text{br}}^n+v_{l_\text{br},m_\text{br}+1}^n+v_{l_\text{br}-1,m_\text{br}}^n+v_{l_\text{br},m_\text{br}-1}^n)\\
+    v_{\text{br}\pm 2}^n &\triangleq (v_{l_\text{br}+2,m_\text{br}}^n+v_{l_\text{br},m_\text{br}+2}^n+v_{l_\text{br}-2,m_\text{br}}^n+v_{l_\text{br},m_\text{br}-2}^n)\\
+    v_{l_\text{br}\pm1, m_\text{br}\pm1}^n &\triangleq (v_{l_\text{br}+1,m_\text{br}+1}^n+v_{l_\text{br}+1,m_\text{br}-1}^n+v_{l_\text{br}-1,m_\text{br}+1}^n+v_{l_\text{br}-1,m_\text{br}-1}^n)
+    \end{aligned}
+\end{equation}
+and using $\sigma_{0,\text{s}} = \sigma_{0,\text{s}} / \rho_\text{s}A$, $\sigma_{1,\text{s}} = \sigma_{1,\text{s}} / \rho_\text{s}A$, $\sigma_{0,\text{p}}  = \sigma_{0,\text{p}} / \rho_\text{p}H$ and $\sigma_{2,\text{p}}  = \sigma_{2,\text{p}} / \rho_\text{p}H$ we get
+\begin{subequations}\label{eq:intermediateDampFact}
+    \begin{align}
+        u^\text{I}_\text{br} = &\Big[(2-2\lambda^2-\mu_\text{s}^2-\frac{4\sigma_{1,\text{s}}k}{h^2})u_l^n + (\lambda^2 + 4\mu_\text{s}^2+\frac{2\sigma_{1,\text{s}}k}{h^2})(u_{\text{br}+1}^n + u_{\text{br}-1}^n)\nonumber\\
+        &+ (-\mu_\text{s}^2)(u_{\text{br}+2}^n+u_{\text{br}-2}^n)+ (-1 + \sigma_{0,\text{s}}k+\frac{4\sigma_{1,\text{s}}k}{h^2})u_l^{n-1}+(-\frac{2\sigma_{1,\text{s}}k}{h^2})(u_{\text{br}+1}^{n-1} + u_{\text{br}-1}^{n-1})\Big]\\
+        &/ \Big[1 + \sigma_{0,\text{s}}k\Big] \nonumber\\
+        w^\text{I} = & \frac{(2-\omega_0^2k^2)w^n+(-1+\frac{Rk}{2M})w^{n-1}}{1+\frac{Rk}{2M}}%\\
+        % v^\text{I}_\text{br} =& \Big[(2-20\mu^2_\text{p}-\frac{8\sigma_{1,\text{p}}k}{h^2})v_\text{br}^n+(8\mu_\text{p}^2+\frac{2\sigma_{1,\text{p}}k}{h^2})v_{\text{br}\pm1}^n+ (-2\mu_\text{p}^2)v_{l_\text{br}\pm1,m_\text{br}\pm1}^n+(-\mu_\text{p}^2)v_{\text{br}\pm2}^n\\
+        % &+(-1 + \frac{8\sigma_{1,\text{p}}k}{h^2})v_\text{br}^{n-1}+(-\frac{2\sigma_{1,\text{p}}k}{h^2})v_{\text{br}\pm1}^{n-1}\Big]/\Big[1+\sigma_{0,\text{p}}k\Big]\nonumber
+    \end{align}
+\end{subequations}
+Again, as done in \eqref{eq:systemNP1NoDamp} the individual connected components at $n+1$ are
+\begin{subequations}
+\begin{align}
+    u_\text{br}^{n+1}&=u_\text{br}^\text{I} - \frac{F_\alpha k^2}{h_\text{s}\rho_\text{s}A(1+\sigma_{0,\text{s}}k)}\\
+        w^{n+1} &= w^\text{I} + \frac{((\mu_{t+}\psi^{n-1/2})g^n + F_\alpha)k^2}{M (1+\frac{Rk}{2M})}%\\
+        % v_\text{br}^{n+1} &= v_\text{br}^\text{I} - \frac{\big(\mu_{t+}\psi^{n-1/2}\big)g^nk^2}{h_\text{p}^2\rho_\text{p}H(1+\sigma_{0,\text{p}}k)}
+        \end{align}
+\end{subequations}
+and as in \eqref{eq:solveForNP1} we solve for $w^{n+1}$
+\begin{equation}
+    w^{n+1} = \frac{M(1+\frac{Rk}{2M})w^\text{I}+k^2\left(\frac{(g^n)^2}{4}(v_\text{br}^{n+1}-\eta_\text{c}^{n-1})+\psi^{n-1/2}g^n+F_\alpha\right)}{M(1+\frac{Rk}{2M})+\frac{(g^n)^2k^2}{4}}.
+\end{equation}
+We can use this to solve for $F_\alpha$ which can be shown to be identical to \eqref{eq:fAlphaOneDivision}.
+
 \subsection{Energy Analysis}
 
 \section{Conclusion}
@@ -517,6 +590,16 @@ Multiplying both sides by $\delta_{t\cdot} \eta^n$ and continuing with the left 
     \end{aligned}
 \end{equation}
 which, when divided by $\delta_{t\cdot}\eta^n$ again satisfies \eqref{eq:discEquality}.
+Knowing that $\sqrt{2\phi}=\psi$
+\begin{equation}
+    \begin{aligned}
+        \psi\psi' &= \phi'\\
+        \sqrt{2\phi}\frac{d}{dt}\left[(2\phi\right)^{1/2}] &= \phi'\\
+        \sqrt{2\phi}\left(\sqrt{2}\frac{\phi'}{2\sqrt{\phi}}\right) &= \phi'\\
+        \sqrt{2\phi}\frac{\phi'}{\sqrt{2\phi}} &= \phi'\\
+        \phi' &= \phi'
+    \end{aligned}
+\end{equation}
 
 \section{Colliding Mass-springs deriviation}\label{app:massMassDeriv}
 \begin{align}
