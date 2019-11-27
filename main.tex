@@ -412,14 +412,14 @@ where
 \subsection{Adding damping}
 Damping can be added to the string, mass and plate. This results in the following system:
 \begin{subnumcases}{}
-    \rho_\text{s} A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx}u^n_l - J_\text{s}(l_\text{br})F_\alpha$ \\
+    \rho_\text{s} A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx}u^n_l - 2\sigma_{0,\text{s}}\delta_{t\cdot}u^n_l+2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u^n_l-J_\text{s}(l_\text{br})F_\alpha$ \\
     M \delta_{tt}w^n &$=-M\omega_0^2w^n - R \delta_{t\cdot}w^n+ \big(\mu_{t+}\psi^{n-1/2}\big)g^n + F_\alpha$\\
     \begin{aligned}
     &\rho_\text{p} H \delta_{tt}v^n_{(l,m)}\\ 
     & 
     \end{aligned}
     & $\begin{aligned} 
-    =&-D\delta_{\Delta \boxplus}\delta_{\Delta \boxplus}v_{(l,m)}^n - 2\sigma_{0, \text{p}}\delta_{t\cdot}v^n_{(l,m)} + 2\sigma_{1, \text{p}}\delta_{t-}\delta_{\Delta\boxplus}v_l^n \\
+    =&-D\delta_{\Delta \boxplus}\delta_{\Delta \boxplus}v_{(l,m)}^n - 2\sigma_{0, \text{p}}\delta_{t\cdot}v^n_{(l,m)} + 2\sigma_{1, \text{p}}\delta_{t-}\delta_{\Delta\boxplus}v_(l,m)^n \\
     &- J_\text{p}(l_\text{br},m_\text{br}) \big(\mu_{t+}\psi^{n-1/2}\big)g^n
     \end{aligned}$\\
     \delta_{t+}\psi^{n-1/2} &$= g^n\delta_{t\cdot}\eta_\text{c}^n$\\
