@@ -12,8 +12,9 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{cases}
-
 \usepackage{xcolor}
+\usepackage{mathrsfs} 
+
 \def\SBcomment[#1]{\textcolor{red}{#1}}
 \def\SWcomment[#1]{\textcolor{blue}{#1}}
 
@@ -412,7 +413,7 @@ where
 \subsection{Adding damping}
 Damping can be added to the string, mass and plate. This results in the following system:
 \begin{subnumcases}{}
-    \rho_\text{s} A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx}u^n_l - J_\text{s}(l_\text{br})F_\alpha$ \\
+    \rho_\text{s} A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l - EI\delta_{xxxx}u^n_l - 2\sigma_{0,\text{s}}\delta_{t\cdot}u_l^n+2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u_l^n- J_\text{s}(l_\text{br})F_\alpha$ \\
     M \delta_{tt}w^n &$=-M\omega_0^2w^n - R \delta_{t\cdot}w^n+ \big(\mu_{t+}\psi^{n-1/2}\big)g^n + F_\alpha$\\
     \begin{aligned}
     &\rho_\text{p} H \delta_{tt}v^n_{(l,m)}\\ 
@@ -423,7 +424,7 @@ Damping can be added to the string, mass and plate. This results in the followin
     &- J_\text{p}(l_\text{br},m_\text{br}) \big(\mu_{t+}\psi^{n-1/2}\big)g^n
     \end{aligned}$\\
     \delta_{t+}\psi^{n-1/2} &$= g^n\delta_{t\cdot}\eta_\text{c}^n$\\
-    \eta_c^n &$= v_{(l_\text{br},m_\text{br})}^n - w^n$\\
+    \eta_\text{c}^n &$= v_{(l_\text{br},m_\text{br})}^n - w^n$\\
     F_\alpha & $= K_1\mu_{tt}\eta_\text{s}^n + K_3(\eta_\text{s}^n)^2\mu_{t\cdot}\eta_\text{s}^n + 2 \sigma_\times\delta_{t\cdot}\eta_\text{s}^n$\label{eq:fAlphaDamp}\\
     \eta_s^n &$= u_{l_\text{br}}^n - w^n$\label{eq:etaSpringDamp}
 \end{subnumcases}
@@ -499,9 +500,9 @@ The complete system can then be solved for the bridge by
 
 \begin{align}
 \begin{bmatrix}
-        u^{n+1}_{l_\text{br}}\\
+        u^{n+1}_\text{br}\\
         w^{n+1}\\
-        v^{n+1}_{(l_\text{br}, m_\text{br})}
+        v^{n+1}_\text{br}
     \end{bmatrix}
     = 
     \mathbf{A}^{-1}\mathbf{v}
@@ -601,6 +602,73 @@ where
 \end{equation}
 
 \subsection{Energy Analysis}
+\section{Tromba Marina: Collision rather than connection}
+If we assume the string and the bridge to be ``connected" using an alternative form of \eqref{eq:potential} (as per Eq. (14) in \cite{Bilbao2019}) we obtain
+\begin{equation}\label{eq:potentialConnection}
+    \phi'(\eta) = K[|\eta| - \epsilon]_+^\alpha\text{sgn}(\eta) \xrightarrow{\ \ \epsilon = 0\ \ } K|\eta|^\alpha\text{sgn}(\eta).
+\end{equation}
+Taking the absolute value of $\eta$ means that there will always be a force which is directed by a multiplication with the sign of $\eta$. Knowing that $\text{sgn}(x) = x/|x|$ we can rewrite \eqref{eq:potentialConnection} to
+\begin{equation}
+    \phi'(\eta)=K|\eta|^\alpha\frac{\eta}{|\eta|},
+\end{equation}
+which, after taking the antiderivative becomes (see Appendix \ref{app:integration} for the steps)
+\begin{equation}
+    \phi(\eta)= \frac{K}{\alpha+1}|\eta|^{\alpha+1}.
+\end{equation}
+Like in \ref{eq:gn}, $g^n$ can be defined as:
+\begin{equation}
+    g^n = \frac{K|\eta^n|^\alpha \text{sgn}(\eta^n)}{\sqrt{\frac{2K|\eta^n|^{\alpha+1}}{\alpha+1}}}\quad= \text{sgn}(\eta^n)\sqrt{\frac{K(\alpha+1)}{2}}|\eta^n|^{\frac{\alpha-1}{2}}\quad= \eta^n\sqrt{\frac{K(\alpha+1)}{2}}|\eta^n|^{\frac{\alpha-3}{2}}
+\end{equation}
+This definition will be used for the connection between the string and the bridge, further defined as $g_1$ and the collision between the bridge and the body will be defined as $g_2$. The complete system will then be:
+
+\textit{ Note: from here I'll be writing in the style which will be used for the journal paper. This includes multiplying the string and plate damping terms with their respective $\rho$'s and $A$ or $H$, and using (complete system) partial differential operators}
+$\mathscr{abcdefg}$
+\begin{subnumcases}{}
+     \ell_\text{s}u_l^n & $= J_\text{s}(l_\text{br}) \big(\mu_{t+}\psi_1^{n-1/2}\big)g_1^n$ \\
+    \ell_\text{b}w^n & $= - \big(\mu_{t+}\psi_1^{n-1/2}\big)g_1^n+ \big(\mu_{t+}\psi_2^{n-1/2}\big)g_2^n$\\
+    \ell_\text{p} v^n_{(l,m)} & $ = - J_\text{p}(l_\text{br},m_\text{br}) \big(\mu_{t+}\psi_2^{n-1/2}\big)g_2^n$\\
+    \delta_{t+}\psi_1^{n-1/2} &$= g_1^n\delta_{t\cdot}\eta_1^n$\\
+    \delta_{t+}\psi_2^{n-1/2} &$= g_2^n\delta_{t\cdot}\eta_2^n$\\
+    \eta_1^n &$= w^n - u_\text{br}^n$\\
+    \eta_2^n &$= v_{(l_\text{br},m_\text{br})}^n - w^n$
+\end{subnumcases}
+where
+\begin{align}
+    \ell_\text{s} &=\rho_\text{s}A\delta_{tt}- T\delta_{xx} + EI\delta_{xxxx}+ 2\rho_\text{s}A\sigma_{0,\text{s}}\delta_{t\cdot}-2\rho_\text{s}A\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}\\
+    \ell_\text{b} &= M\delta_{tt} + M\omega_0^2 + MR \delta_{t\cdot}\\
+    \ell_\text{p} &= \rho_\text{p} H \delta_{tt} + D\delta_{\Delta \boxplus}\delta_{\Delta \boxplus} + 2\rho_\text{p}H\sigma_{0, \text{p}}\delta_{t\cdot} - 2\rho_\text{p}H\sigma_{1, \text{p}}\delta_{t-}\delta_{\Delta\boxplus}
+\end{align}
+
+The complete system can then be solved for the bridge by
+
+\begin{align}
+\begin{bmatrix}
+        u^{n+1}_\text{br}\\
+        w^{n+1}\\
+        v^{n+1}_\text{br}
+    \end{bmatrix}
+    = 
+    \mathbf{A}^{-1}\mathbf{v}
+\end{align}
+where
+\begin{equation}
+\begin{gathered}
+\mathbf{A} = 
+    \begin{bmatrix}
+        \frac{\rho_\text{s} A}{k^2} + \frac{\rho_\text{s}A\sigma_{0,\text{s}}}{k} + \frac{(g_1^n)^2}{4h_\text{s}} & -\frac{(g_1^n)^2}{4h_\text{s}} & 0 \\
+        -\frac{(g_1^n)^2}{4} & \frac{M}{k^2}+\frac{MR}{2k}+\frac{(g_1^n)^2}{4}+\frac{(g_2^n)^2}{4} &-\frac{(g_2^n)^2}{4}\\
+        0 & -\frac{(g_2^n)^2}{4h_\text{p}^2} & \frac{\rho_\text{p}H}{k^2} + \frac{\rho_\text{p}H\sigma_{0,\text{p}}}{k} + \frac{(g^n)^2}{4h_\text{p}^2}
+    \end{bmatrix}
+    \quad \text{and}\\
+    \mathbf{v} = 
+    \begin{bmatrix}
+        \frac{\rho_\text{s} A}{k^2}(2u^n_\text{br}-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + \frac{\sigma_{0,\text{s}}}{k}u_\text{br}^{n-1} + 2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u_\text{br}^n -\left(\frac{(g_1^n)^2}{4}\eta_1^{n-1}-\psi_1^{n-1/2}g_1^n\right)/h_\text{s}\\
+        \frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n + \frac{MR}{2k}w^{n-1}+\frac{(g_1^n)^2}{4}\eta_1^{n-1}-\psi_1^{n-1}g_1^n-\frac{(g_2^n)^2}{4}\eta_2^{n-1}+\psi_2^{n-1/2}g_2^n\\
+        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+ \frac{\sigma_{0,\text{p}}}{k}v^{n-1}_\text{br} + 2\sigma_{1,\text{p}}\delta_{t-}\delta_{\Delta\boxplus}v^n_\text{br} + \Big(\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
+    \end{bmatrix}
+    \nonumber
+\end{gathered}
+\end{equation}
 
 \section{Conclusion}
 Using the tools described in this chapter, you can build any system of elements (strings, masses, barriers) and let them collide.
@@ -664,4 +732,89 @@ Weird collision case:
     \eta_\text{ms}^n &$= w^n - u_\text{m}^n$\\
     \eta_\text{mb}^n &$= b - w^n$\label{eq:etaSpring}
 \end{subnumcases}
+
+\section{Integration by u-substitution}\label{app:integration}
+Test
+\begin{equation}
+\begin{aligned}
+    \phi(\eta) &= \int K\frac{\eta}{|\eta|}|\eta|^\alpha d\eta\\
+    % \text{u-substitution:}
+    &\boxed{
+    \begin{aligned}
+    u &= |\eta| \\
+    \frac{du}{d\eta} &= \frac{\eta}{|\eta|}\\
+    d\eta &= \frac{|\eta|}{\eta}du
+    \end{aligned}
+    }\\
+    \end{aligned}\nonumber
+\end{equation}
+    \begin{equation}
+    = K\int \frac{\eta}{|\eta|}u^\alpha\frac{|\eta|}{\eta}du \quad = K\int u^\alpha du \quad = \frac{K}{\alpha + 1}u^{\alpha+1} \quad = \frac{K}{\alpha+1}|\eta|^{\alpha+1}
+\end{equation}
+\section{Stefans code}
+Consider the following system:
+
+\begin{subnumcases}{\label{eq:trombaSystem}}
+    M \delta_{tt}w^n &$=- \big(\mu_{t+}\psi_\text{M}^{n-1/2}\big)g_\text{M}^n + \big(\mu_{t+}\psi_\text{B}^{n-1/2}\big)g_\text{B}^n$\label{eq:massStefan}\\
+    \rho A \delta_{tt}u^n_l & $=T\delta_{xx}u^n_l+ J_\text{s}(l_\text{br})(\mu_{t+}\psi_\text{M}^{n-1/2})g_\text{M}^n$ \label{eq:stringStefan}\\
+ \delta_{t+}\psi_\text{M}^{n-1/2} &$= g_\text{M}^n\delta_{t\cdot}\eta_\text{M}^n$\\
+ \delta_{t+}\psi_\text{B}^{n-1/2} &$= g_\text{B}^n\delta_{t\cdot}\eta_\text{B}^n$\\
+    \eta_\text{M}^n &$= w^n - u_\text{br}^n$\\
+    \eta_\text{B}^n &$= b - w^n$
+\end{subnumcases}
+%
+Because the location of the barrier $b$ is stationary, we know that (also as per \eqref{eq:derEtaEqDerU})
+\begin{equation}\label{eq:deltaEtaB}
+    \delta_{t\cdot}\eta_\text{B}^n= \delta_{t\cdot}(b-w^n) = \delta_{t\cdot}(-w^n) = -\delta_{t\cdot}w^n.
+\end{equation}
+Expanding and solving this for $w^{n+1}$ yields
+\begin{equation}\label{eq:explicitWNP1}
+    w^{n+1} = w^{n-1}-2k\delta_{t\cdot}\eta_B.
+\end{equation}
+After expansion of \eqref{eq:massStefan}, this can be filled into the equation
+\begin{equation}
+    \frac{M}{k^2}(w^{n-1}-2k\delta_{t\cdot}\eta_\text{B}-2w^n+w^{n-1})= -\left(\frac{g_\text{M}k}{2}\delta_{t\cdot}\eta_\text{M}^n+\psi_\text{M}^{n-1/2}\right)g_\text{M}^n + \left(\frac{g_\text{B}k}{2}\delta_{t\cdot}\eta_\text{B}^n+\psi_\text{B}^{n-1/2}\right)g_\text{B}^n,
+\end{equation}
+and can be rewritten to
+\begin{equation}
+\begin{aligned}
+    \frac{2M}{k^2}(w^{n-1}-k\delta_{t\cdot}\eta_\text{B}-w^n)&=\dots\\
+    -k\delta_{t\cdot}\eta_\text{B} &= w^n - w^{n-1} + \frac{k^2}{2M}(\dots)\\
+    \delta_{t\cdot}\eta_\text{B}&= -\frac{w^n-w^{n-1}}{k}-\frac{k}{2M}(\dots)
+        \end{aligned}
+\end{equation}
+Getting all $\delta_{t\cdot}\eta^n$ terms to the left hand side yields
+\begin{equation}\label{eq:solutionMassStefan}
+    \left(1+\frac{k^2(g_\text{B}^n)^2}{4M}\right)\delta_{t\cdot}\eta_\text{B}^n-\frac{k^2(g_\text{M}^n)^2}{4M}\delta_{t\cdot}\eta_\text{M}^n = -\frac{w^n-w^{n-1}}{k}+\frac{kg_\text{M}^n\psi^{n-1/2}_M}{2M}-\frac{kg_\text{B}^n\psi_\text{B}^{n-1/2}}{2M}
+\end{equation}
+The same can be done for \eqref{eq:stringStefan}. Following the same lines as in \eqref{eq:deltaEtaB} we obtain
+\begin{equation}
+    \delta_{t\cdot}\eta_M^n = \delta_{t\cdot}(w^n-u_\text{br}^n)=\frac{1}{2k}\left(w^{n+1}-w^{n-1}-u_\text{br}^{n+1}+u_\text{br}^{n-1}\right).
+\end{equation}
+Then inserting \eqref{eq:explicitWNP1} into this and solving for $u_\text{br}^{n+1}$ yields
+\begin{equation}
+    u_\text{br}^{n+1} = -2k\delta_{t\cdot}\eta_\text{B}^n+u_\text{br}^{n-1}-2k\delta_{t\cdot}\eta_\text{M}^n .
+\end{equation}
+Using the same process as above we end up with
+\begin{equation}
+    \delta_{t\cdot}\eta^n_\text{B}+\left(1+\frac{(g_\text{M}^n)^2k^2}{4\rho Ah}\right)\delta_{t\cdot}\eta^n_\text{M} = -\frac{u_\text{br}^n+u_\text{br}^{n-1}}{k}-\frac{Tk}{2\rho A}\delta_{xx}u^n_\text{br}-\frac{kg_\text{M}^n\psi_\text{M}^{n-1/2}}{2\rho Ah}.
+\end{equation}
+To get to Stefan's code, we subtract \eqref{eq:solutionMassStefan} from this equation. This then written in matrix form, this yields:
+\begin{equation}
+\begin{gathered}
+\mathbf{A} = 
+    \begin{bmatrix}
+        1+\frac{k^2(g_\text{B}^n)^2}{4M} & -\frac{k^2(g_\text{M}^n)^2}{4M}\\
+        -\frac{k^2(g_\text{B}^n)^2}{4M} & 1+\frac{k^2(g_\text{M}^n)^2}{4M}+\frac{k^2(g_\text{M}^n)^2}{4\rho Ah}
+    \end{bmatrix}
+    \quad \text{and}\\
+    \mathbf{v} = 
+    \begin{bmatrix}
+        -\frac{w^n-w^{n-1}}{k}+\frac{kg_\text{M}^n\psi^{n-1/2}_M}{2M}-\frac{kg_\text{B}^n\psi_\text{B}^{n-1/2}}{2M}\\
+        \frac{w^n-w^{n-1}}{k}-\frac{kg_\text{M}^n\psi_\text{M}^{n-1/2}}{2M}+\frac{kg_\text{B}^n\psi_\text{B}^{n-1/2}}{2M}-\frac{u_\text{br}^n-u_\text{br}^{n-1}}{k}-\frac{Tk}{2\rho A}\delta_{xx}u_\text{br}^n-\frac{kg_\text{M}^n\psi_\text{M}^{n-1/2}}{2\rho Ah}
+    \end{bmatrix}
+    \nonumber
+\end{gathered}
+\end{equation}
+
 \end{document}
