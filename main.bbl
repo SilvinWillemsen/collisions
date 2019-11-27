@@ -5,6 +5,11 @@ S.~Bilbao.
 \newblock {\em Numerical Sound Synthesis}.
 \newblock John Wiley \& Sons, 2009.
 
+\bibitem{Bilbao2019}
+Stefan Bilbao, Michele Ducceschi, and Craig~J. Webb.
+\newblock Large-scale real-time modular physical modeling sound synthesis.
+\newblock {\em DAFx-19}, 2019.
+
 \bibitem{Ducceschi2019}
 Michele Ducceschi.
 \newblock Non-iterative solvers for nonlinear problems: The case of collisions.
