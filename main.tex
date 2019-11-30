@@ -629,15 +629,18 @@ $\mathscr{abcdefg}$
     \ell_\text{p} v^n_{(l,m)} & $ = - J_\text{p}(l_\text{br},m_\text{br}) \big(\mu_{t+}\psi_2^{n-1/2}\big)g_2^n$\\
     \delta_{t+}\psi_1^{n-1/2} &$= g_1^n\delta_{t\cdot}\eta_1^n$\\
     \delta_{t+}\psi_2^{n-1/2} &$= g_2^n\delta_{t\cdot}\eta_2^n$\\
-    \eta_1^n &$= w^n - u_\text{br}^n$\\
-    \eta_2^n &$= v_{(l_\text{br},m_\text{br})}^n - w^n$
+    \eta_1^n &$= w^n - u_\text{br}^n$\label{eq:eta1Col}\\
+    \eta_2^n &$= v_\text{br}^n - w^n$\label{eq:eta2Col}
 \end{subnumcases}
 where
+\begin{subequations}\label{eq:fdsOperators}
 \begin{align}
-    \ell_\text{s} &=\rho_\text{s}A\delta_{tt}- T\delta_{xx} + EI\delta_{xxxx}+ 2\rho_\text{s}A\sigma_{0,\text{s}}\delta_{t\cdot}-2\rho_\text{s}A\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}\\
+\ell_\text{s} &=\rho_\text{s}A\delta_{tt}- T\delta_{xx} + EI\delta_{xxxx}+ 2\rho_\text{s}A\sigma_{0,\text{s}}\delta_{t\cdot}-2\rho_\text{s}A\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}\\
     \ell_\text{b} &= M\delta_{tt} + M\omega_0^2 + MR \delta_{t\cdot}\\
     \ell_\text{p} &= \rho_\text{p} H \delta_{tt} + D\delta_{\Delta \boxplus}\delta_{\Delta \boxplus} + 2\rho_\text{p}H\sigma_{0, \text{p}}\delta_{t\cdot} - 2\rho_\text{p}H\sigma_{1, \text{p}}\delta_{t-}\delta_{\Delta\boxplus}
-\end{align}
+    \end{align}
+\end{subequations}
+    
 
 The complete system can then be solved for the bridge by
 
@@ -662,14 +665,75 @@ where
     \quad \text{and}\\
     \mathbf{v} = 
     \begin{bmatrix}
-        \frac{\rho_\text{s} A}{k^2}(2u^n_\text{br}-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + \frac{\sigma_{0,\text{s}}}{k}u_\text{br}^{n-1} + 2\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u_\text{br}^n -\left(\frac{(g_1^n)^2}{4}\eta_1^{n-1}-\psi_1^{n-1/2}g_1^n\right)/h_\text{s}\\
+        \frac{\rho_\text{s} A}{k^2}(2u^n_\text{br}-u_\text{br}^{n-1})+T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n + \frac{\rho_\text{s} A\sigma_{0,\text{s}}}{k}u_\text{br}^{n-1} + 2\rho_\text{s} A\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u_\text{br}^n -\left(\frac{(g_1^n)^2}{4}\eta_1^{n-1}-\psi_1^{n-1/2}g_1^n\right)/h_\text{s}\\
         \frac{M}{k^2}(2w^n-w^{n-1})-M\omega_0^2w^n + \frac{MR}{2k}w^{n-1}+\frac{(g_1^n)^2}{4}\eta_1^{n-1}-\psi_1^{n-1}g_1^n-\frac{(g_2^n)^2}{4}\eta_2^{n-1}+\psi_2^{n-1/2}g_2^n\\
-        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+ \frac{\sigma_{0,\text{p}}}{k}v^{n-1}_\text{br} + 2\sigma_{1,\text{p}}\delta_{t-}\delta_{\Delta\boxplus}v^n_\text{br} + \Big(\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
+        \frac{\rho_\text{p}H}{k^2}(2v_\text{br}^n-v_\text{br}^{n-1})-D\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_\text{br}^n+ \frac{\rho_\text{p}H\sigma_{0,\text{p}}}{k}v^{n-1}_\text{br} + 2\rho_\text{p} H\sigma_{1,\text{p}}\delta_{t-}\delta_{\Delta\boxplus}v^n_\text{br} + \Big(\frac{(g^n)^2}{4}\eta^{n-1}-\psi^{n-1/2}g^n\Big)/h_\text{p}^2
     \end{bmatrix}
     \nonumber
 \end{gathered}
 \end{equation}
+It is also possible to solve for  $\delta_{t\cdot}\eta_1^n$ and $\delta_{t\cdot}\eta_2^n$ instead. Recalling \eqref{eq:eta1Col} and \eqref{eq:eta2Col}, we know that the following has to be true:
 
+\begin{equation}
+\begin{aligned}
+    \delta_{t\cdot}\eta_1^n &= \delta_{t\cdot}(w^n - u_\text{br}^n) \quad \text{and}\\
+    \delta_{t\cdot}\eta_2^n &= \delta_{t\cdot}(v_\text{br}^n - w^n)
+    \end{aligned}
+\end{equation}
+which when (semi)expanded yields:
+\begin{equation}\label{eq:expandedEtas}
+\begin{aligned}
+    2k\delta_{t\cdot}\eta_1^n &= w^{n+1}-w^{n-1}-u_\text{br}^{n+1}+u_\text{br}^{n-1} \quad \text{and}\\  2k\delta_{t\cdot}\eta_2^n &= v_\text{br}^{n+1}-v_\text{br}^{n-1}-w^{n+1}+w^{n-1}
+    \end{aligned}
+\end{equation}
+Solving the equations described in \eqref{eq:fdsOperators} for their states at $n+1$ we get:
+\begin{subequations}
+\begin{align}
+    % \left(\frac{\rho_\text{s}A}{k^2}+\frac{\rho_\text{s}A\sigma_{0,\text{s}}}{k}\right) u_\text{br}^{n+1} =
+    % &\ \frac{\rho_\text{s}A}{k^2}(2u_\text{br}^n-u_\text{br}^{n-1}) + T\delta_{xx}u_\text{br}^n-EI\delta_{xxxx}u_\text{br}^n+\frac{\rho_\text{s}A\sigma_{0,\text{s}}}{k}u_\text{br}^{n-1}-2\rho_\text{s}A\sigma_{1,\text{s}}\delta_{t-}\delta_{xx}u_\text{br}^n\\
+    % & +\frac{1}{h_\text{s}}\left(\frac{(g_1^n)^2k}{2}\delta_{t\cdot}\eta_1^n+\psi_1^{n-1/2}\right)\nonumber\\
+    u_\text{br}^{n+1} &= u_\text{br}^\text{I}
+     +\frac{k^2}{h_\text{s}\rho_\text{s}A(1+\sigma_{0,\text{s}}k)}\left(\frac{(g_1^n)^2k}{2}\delta_{t\cdot}\eta_1^n+\psi_1^{n-1/2}g_1^n\right)\nonumber\\
+    % \left(\frac{M}{k^2}+\frac{MR}{2k}\right)w^{n+1} = &\ \frac{M}{k^2}(2w^n-w^{n-1}) - M\omega_0^2w^n + \frac{MR}{2k}w^{n-1}-\left(\frac{(g_1^n)^2k}{2}\delta_{t\cdot}\eta_1^n+\psi_1^{n-1/2}\right)\\
+    % &+\left(\frac{(g_2^n)^2k}{2}\delta_{t\cdot}\eta_2^n+\psi_2^{n-1/2}\right)\nonumber
+    w^{n+1} &= w^\text{I}-\frac{k^2}{M\left(1+\frac{Rk}{2}\right)}\left(\frac{(g_1^n)^2k}{2}\delta_{t\cdot}\eta_1^n+\psi_1^{n-1/2}g_1^n\right)+\frac{k^2}{M\left(1+\frac{Rk}{2}\right)}\left(\frac{(g_2^n)^2k}{2}\delta_{t\cdot}\eta_2^n+\psi_2^{n-1/2}g_2^n\right)\nonumber\\
+    v_\text{br}^{n+1} &= v_\text{br}^\text{I}-\frac{k^2}{h_\text{p}^2\rho_\text{p}H(1+\sigma_{0,\text{p}}k)}\left(\frac{(g_2^n)^2k}{2}\delta_{t\cdot}\eta_2^n+\psi_2^{n-1/2}g_2^n\right)\nonumber
+\end{align}
+\end{subequations}
+where
+\begin{subequations}\label{eq:intermediateColCol}
+    \begin{align}
+        u^\text{I}_\text{br}& = \frac{2u_\text{br}^n-u_\text{br}^{n-1}+\frac{Tk^2}{\rho_\text{s}A}\delta_{xx}u_\text{br}^n-\frac{EIk^2}{\rho_\text{s}A}\delta_{xxxx}u_\text{br}^n + \sigma_{0,\text{s}}ku_\text{br}^{n-1} + 2\sigma_{1,\text{s}}k^2\delta_{t-}\delta_{xx}u^n_\text{br}}{1 + \sigma_{0,\text{s}}k} \\
+        w^\text{I} & = \frac{2w^n-w^{n-1}-k^2\omega_0^2w^n+\frac{Rk}{2}w^{n-1}}{1 + \frac{Rk}{2}}\\
+        v^\text{I}_{\text{br}} & = \frac{2v_{\text{br}}^n-v_{\text{br}}^{n-1}-\frac{Dk^2}{\rho_\text{p}H}\delta_{\Delta\boxplus}\delta_{\Delta\boxplus}v_{\text{br}}^n+\sigma_{0,\text{p}}kv^{n-1}_\text{br}+ 2\sigma_{1,\text{p}}k^2\delta_{t-}\delta_{xx}v^n_\text{br}}{1+\sigma_{0,\text{p}}k}
+    \end{align}
+\end{subequations}
+These can then be inserted into \eqref{eq:expandedEtas} and solved for $\delta_{t\cdot}\eta_1^n$ and $\delta_{t\cdot}\eta_2^n$
+\begin{equation}
+    \begin{bmatrix}
+        \delta_{t\cdot}\eta_1^n\\
+        \delta_{t\cdot}\eta_2^n
+    \end{bmatrix}
+    = 
+    \mathbf{A}^{-1}\mathbf{v}
+\end{equation}
+where
+\begin{equation}
+\begin{gathered}
+\mathbf{A} = 
+    \begin{bmatrix}
+        1 + \frac{(g_1^n)^2k^2}{2M(2+Rk)} + \frac{(g_1^n)^2k^2}{4\rho_\text{s}Ah_\text{s}(1+\sigma_{0,\text{s}}k)} & -\frac{(g_2^n)^2k^2}{2M(2+Rk)} \\
+        -\frac{(g_1^n)^2k^2}{2M(2+Rk)} & 1+\frac{(g_2^n)^2k^2}{2M(2+Rk)}+\frac{(g_2^n)^2k^2}{4h_\text{p}^2\rho_\text{p}H(1+\sigma_{0,\text{p}}k)}
+    \end{bmatrix}
+    \quad \text{and}\\
+    \mathbf{v} = 
+    \begin{bmatrix}
+        \frac{w^\text{I}-w^{n-1}-u_\text{br}^\text{I}+u_\text{br}^{n-1}}{2k} - \frac{k(\psi_1^{n-1/2}g_1^n-\psi_2^{n-1/2}g_2^n)}{M(2+Rk)}-\frac{\psi_1^{n-1/2}g_1^nk}{2\rho_\text{s}Ah_\text{s}(1+\sigma_{0,\text{s}}k)}\\
+        \frac{v_\text{br}^\text{I}-v_\text{br}^{n-1}-w^\text{I}+w^{n-1}}{2k}+\frac{k(\psi_1^{n-1/2}g_1^n-\psi_2^{n-1/2}g_2^n)}{M(2+Rk)}-\frac{\psi_2^{n-1/2}g_2^nk}{2h_\text{p}^2\rho_\text{p}H(1+\sigma_{0,\text{p}}k)}
+    \end{bmatrix}
+    \nonumber
+\end{gathered}
+\end{equation}
 \section{Conclusion}
 Using the tools described in this chapter, you can build any system of elements (strings, masses, barriers) and let them collide.
 \subsection{Implementation}
