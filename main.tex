@@ -615,7 +615,7 @@ which, after taking the antiderivative becomes (see Appendix \ref{app:integratio
 \begin{equation}
     \phi(\eta)= \frac{K}{\alpha+1}|\eta|^{\alpha+1}.
 \end{equation}
-Like in \ref{eq:gn}, $g^n$ can be defined as:
+Like in \eqref{eq:gn}, $g^n$ can be defined as:
 \begin{equation}
     g^n = \frac{K|\eta^n|^\alpha \text{sgn}(\eta^n)}{\sqrt{\frac{2K|\eta^n|^{\alpha+1}}{\alpha+1}}}\quad= \text{sgn}(\eta^n)\sqrt{\frac{K(\alpha+1)}{2}}|\eta^n|^{\frac{\alpha-1}{2}}\quad= \eta^n\sqrt{\frac{K(\alpha+1)}{2}}|\eta^n|^{\frac{\alpha-3}{2}}
 \end{equation}
@@ -772,7 +772,20 @@ Knowing that $\sqrt{2\phi}=\psi$
         \phi' &= \phi'
     \end{aligned}
 \end{equation}
-
+\section{Proof that $\delta_{t+}\psi^{n-1/2} = \delta_{t\cdot}\psi^n$}
+As per Eq. (20) in \cite{Ducceschi2019}, $\psi^{n-1/2} \triangleq \mu_{t-}\psi(\eta^n)$ so,
+\begin{equation}
+        \delta_{t+}\psi^{n-1/2}=\delta_{t+}(\mu_{t-}\psi(\eta^n))
+\end{equation}
+Expanding the right-hand side according to \cite{Bilbao2009} Eq. (2.3b), this results in
+\begin{equation}
+    \begin{aligned}
+        \delta_{t+}\psi^{n-1/2}&=\frac{1}{2} \Big(\psi(\eta^n)+\psi(\eta^{n-1})\Big) \\
+        &= \frac{1}{k}\left(\frac{1}{2}\Big(\psi(\eta^{n+1})-\psi(\eta^n)+\psi(\eta^n)-\psi(\eta^{n-1})\Big)\right)\\
+        &=\frac{1}{2k}\Big(\psi(\eta^{n+1})-\psi(\eta^{n-1})\Big)\\
+        &= \delta_{t\cdot}\psi(\eta^n) = \delta_{t\cdot}\psi^n
+    \end{aligned}
+\end{equation}
 \section{Colliding Mass-springs deriviation}\label{app:massMassDeriv}
 \begin{align}
     \frac{M_1}{k^2}u^{n+1} &= \frac{M_1}{k^2}(2u^n-u^{n-1})-M_1\omega_1u^n+\Big(\frac{g^n}{4}(\eta^{n+1}-\eta^{n-1})+\psi^{n-1/2}\Big)g^n\nonumber\\
@@ -879,6 +892,22 @@ To get to Stefan's code, we subtract \eqref{eq:solutionMassStefan} from this equ
     \end{bmatrix}
     \nonumber
 \end{gathered}
+\end{equation}
+We know that:
+\begin{equation}\label{eq:nonLinEq1}
+\eta^{n+1} = u^{n+1} - b \quad \text{and}\quad \eta^{n-1} = u^{n-1} - b
+\end{equation}
+You define:
+\begin{equation}
+r \triangleq u^{n+1} - u^{n-1} \quad \text{and} \quad a \triangleq b - u^{n-1}
+\end{equation}
+the first of which can be rewritten to
+\begin{equation}
+     u^{n+1} = r + u^{n-1}
+\end{equation}
+and filled in to \eqref{eq:nonLinEq1}
+\begin{equation}
+    \eta^{n+1}=r +u^{n-1}-b\quad \Rightarrow \quad \eta^{n+1}=r-(b-u^{n-1}) \quad \Rightarrow \quad \eta^{n+1}=r - a
 \end{equation}
 
 \end{document}
