@@ -314,7 +314,7 @@ The system will be defined as
 As shown in Appendix \ref{app:operatorProof}, $\delta_{t+}\phi^{n-1/2} = \delta_{t\cdot}\phi^n$. Again we can expand all the operators, solve Eqs. \eqref{eq:massStringNR1} and \eqref{eq:massStringNR2} for $u_l^{n+1}$ and $w^{n+1}$ respectively, and fill them into \eqref{eq:massStringNR3} for $n+1$ to get
 \begin{equation}
     \begin{aligned}
-    \eta^{n+1} =&\ 2w^n - w^{n-1}-k^2\omega_0^2w^n - 2u_{l_m}^n + u_{l_m}^{n-1} - T\delta_{xx}u_{l_m}^n+EI\delta_{xxxx}u_{l_m}^n\\
+    \eta^{n+1} =&\ 2w^n - w^{n-1}-k^2\omega_0^2w^n - 2u_{l_m}^n + u_{l_m}^{n-1} - \frac{Tk^2}{\rho A}\delta_{xx}u_{l_m}^n+\frac{EIk^2}{\rho A}\delta_{xxxx}u_{l_m}^n\\
     &- \frac{k^2}{\rho Ah}\frac{\phi(\eta^{n+1})-\phi(\eta^{n-1})}{\eta^{n+1}-\eta^{n-1}} - \frac{k^2}{M}\frac{\phi(\eta^{n+1})-\phi(\eta^{n-1})}{\eta^{n+1}-\eta^{n-1}},
     \end{aligned}
 \end{equation} 
@@ -330,12 +330,30 @@ Eq. \eqref{eq:NRequation} can then be solved using Newton-Raphson according to
 \begin{equation}
     [\eta^{n+1}]^{i+1}=[\eta^{n+1}]^i-\frac{G([\eta^{n+1}]^i)}{G'([\eta^{n+1}]^i)}.
 \end{equation}
-Using the quotient rule, and recalling Eq. \eqref{eq:etaPlus}, $G'([\eta^{n+1}]^i)$ can be calculated:
+Recalling Eq. \eqref{eq:etaPlus}, and the derivative of an absolute value:
+\begin{equation}
+    |f|' = \frac{f}{|f|} \cdot f' =\text{sgn}(f)f'
+\end{equation}
+we can find its derivative:
+\begin{equation}
+    \Big[[f]_+\Big]' = \left[\frac{f+|f|}{2}\right]' = \frac{1+\text{sgn}(f)f'}{2}
+\end{equation}
+Now, using the quotient rule, $G'([\eta^{n+1}]^i)$ can be calculated:
 \begin{equation}
     \begin{aligned}
-    G' &= 1 - \left(\frac{k^2}{\rho Ah}+\frac{k^2}{M}\right)\left[\frac{\frac{K}{\alpha+1}[\eta^{n+1}]_+^{\alpha+1}-\frac{K}{\alpha+1}[\eta^{n-1}]_+^{\alpha+1}}{\eta^{n+1}-\eta^{n-1}}\right]^{'}\\
-    &= 1 - \left(\frac{k^2}{\rho Ah}+\frac{k^2}{M}\right) \frac{K}{2(\alpha+1)}\frac{\eta^{n+1}+|\eta^{n+1}|-\eta^{n-1}-|\eta^{n-1}|}{\eta^{n+1}-\eta^{n-1}}
-    \end{aligned}
+    G' &= 1 - \left(\frac{k^2}{\rho Ah}+\frac{k^2}{M}\right)\left[\frac{\frac{K}{\alpha+1}[\eta^{n+1}]_+^{\alpha+1}-\frac{K}{\alpha+1}[\eta^{n-1}]_+^{\alpha+1}}{\eta^{n+1}-\eta^{n-1}}\right]'\\
+    &= 1 - \left(\frac{k^2}{\rho Ah}+\frac{k^2}{M}\right)\left(\frac{K}{\alpha+1}\right)\left[\frac{[\eta^{n+1}]_+^{\alpha+1}-[\eta^{n-1}]_+^{\alpha+1}}{\eta^{n+1}-\eta^{n-1}}\right]'
+    % &= 1 - \left(\frac{k^2}{\rho Ah}+\frac{k^2}{M}\right) \frac{K}{2(\alpha+1)}\left[\frac{(\eta^{n+1}+|\eta^{n+1}|)^{\alpha+1}-(\eta^{n-1}+|\eta^{n-1}|)^{\alpha+1}}{\eta^{n+1}-\eta^{n-1}}\right]'\\
+    & \\
+    &\begin{gathered}
+        \text{Quotient rule: }\boxed{\left[\frac{f}{g}\right]' = \frac{f'g - fg'}{g^2}} \qquad f' = (\alpha+1)[\eta^{n+1}]_+^\alpha\left(\frac{1+\text{sgn}(\eta^{n+1})}{2}\right) \qquad g' = 1
+    \end{gathered}\\
+    & \\
+    % & 1 - \left(\frac{k^2}{\rho Ah}+\frac{k^2}{M}\right) \frac{K}{2(\alpha+1)}\\
+    & = 1 - \left(\frac{k^2}{\rho Ah}+\frac{k^2}{M}\right) \frac{K}{\alpha+1}\left(\frac{(\alpha+1)[\eta^{n+1}]_+^\alpha\left(\frac{1+\text{sgn}(\eta^{n+1})}{2}\right)\cdot(\eta^{n+1}-\eta^{n-1})-\Big([\eta^{n+1}]_+^{\alpha+1}-[\eta^{n-1}]_+^{\alpha+1}\Big)\cdot 1
+    }{(\eta^{n+1}-\eta^{n-1})^2}\right)\\
+    & = 1 - \left(\frac{k^2}{\rho Ah}+\frac{k^2}{M}\right) \frac{K}{\alpha+1}\left(\frac{(\alpha+1)[\eta^{n+1}]_+^\alpha\Big(1+\text{sgn}(\eta^{n+1})\Big)}{2(\eta^{n+1}-\eta^{n-1})}-\frac{[\eta^{n+1}]_+^{\alpha+1}-[\eta^{n-1}]_+^{\alpha+1}}{(\eta^{n+1}-\eta^{n-1})^2}\right)
+\end{aligned}
 \end{equation}
 \section{Tromba Marina}
 The tromba marina is a bowed string instrument with a rattling bridge. The bridge has a pivot-point right below where the string rests on the bridge and moves according to the movement of the string. The system we will be looking will contain a string, a mass simulating the bridge and a plate simulating the body of the instrument (see Figure \ref{fig:tromba}). 
